@@ -18,8 +18,8 @@ import java.util.UUID;
 public class User {
     @Id
     private UUID userId;
-    private String email;
     @Column(unique = true)
+    private String email;
     private String passwordHash;
     private String firstName;
     private String lastName;

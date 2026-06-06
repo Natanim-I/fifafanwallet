@@ -19,7 +19,8 @@ public class UserController {
     @PostMapping("register")
     public ResponseEntity<UserResponse> registerUser(User user){
         User registeredUser = userService.registerUser(user);
-        UserResponse userResponse = new UserResponse();
+        UserResponse userResponse = new UserResponse(
+                registeredUser.getUserId(), registeredUser.getEmail(), registeredUser.getFirstName(), registeredUser.getLastName(), registeredUser.getCountry());
         return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
     }
 }
