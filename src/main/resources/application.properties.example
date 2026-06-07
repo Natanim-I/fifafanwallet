@@ -1,10 +1,8 @@
 spring.application.name=FIFAFanWallet
+spring.datasource.url=${DATABASE_URL}
+spring.datasource.username=${DATABASE_USERNAME}
+spring.datasource.password=${DATABASE_PASSWORD}
 spring.datasource.driver-class-name=org.postgresql.Driver
 spring.jpa.hibernate.ddl-auto=update
 server.servlet.session.cookie.same-site=Strict
-
-#TO BE CHANGED
-spring.datasource.url=DATABASE_URL
-spring.datasource.username=DATABASE_USERNAME
-spring.datasource.password=DATABASE_PASSWORD
-jwt.secret=JWT_SECRET
+jwt.secret=${JWT_SECRET}

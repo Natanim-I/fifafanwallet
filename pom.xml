@@ -91,6 +91,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>fifa-fan-wallet</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
