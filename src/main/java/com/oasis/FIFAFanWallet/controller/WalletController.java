@@ -18,13 +18,19 @@ public class WalletController {
     @Autowired
     private WalletService walletService;
 
-    @GetMapping("users/{userId}/wallets")
+    @GetMapping("/users/{userId}/wallets")
     public ResponseEntity<List<WalletResponse>> getUserWallets(@PathVariable UUID userId) {
         return ResponseEntity.ok(walletService.getUserWallets(userId));
     }
 
-    @PostMapping("users/{userId}/wallet")
+    @PostMapping("/users/{userId}/wallet")
     public ResponseEntity<WalletResponse> createWallet(@PathVariable UUID userId, @RequestBody WalletRequest walletRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(walletService.createUserWallet(userId, walletRequest));
+    }
+
+    @DeleteMapping("/users/{userId}/wallets/{walletId}")
+    public ResponseEntity<Void> disableUserWallet(@PathVariable UUID userId, @PathVariable UUID walletId){
+        walletService.disableUserWallet(userId, walletId);
+        return ResponseEntity.noContent().build();
     }
 }

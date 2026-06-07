@@ -40,4 +40,9 @@ public class GeneralExceptionHandler {
     public ResponseEntity<ErrorResponse> walletAlreadyExistsHandler(WalletAlreadyExistsException ex){
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(409, ex.getMessage()));
     }
+
+    @ExceptionHandler(WalletNotFoundException.class)
+    public ResponseEntity<ErrorResponse> walletNotFoundHandler(WalletNotFoundException ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404, ex.getMessage()));
+    }
 }

@@ -15,7 +15,6 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Component
 @Table(name = "transactions")
 public class Transaction {
     @Id
@@ -30,4 +29,8 @@ public class Transaction {
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;
     private LocalDateTime createdAt;
+    @PrePersist
+    public void onCreate(){
+        this.createdAt = LocalDateTime.now();
+    }
 }

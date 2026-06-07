@@ -1,7 +1,6 @@
 package com.oasis.FIFAFanWallet.dto;
 
-import java.math.BigDecimal;
-import java.util.Currency;
+import com.oasis.FIFAFanWallet.enums.Currency;
 
 public record WalletRequest(Currency currency) {
 }

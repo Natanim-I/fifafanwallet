@@ -2,19 +2,18 @@ package com.oasis.FIFAFanWallet.service;
 
 import com.oasis.FIFAFanWallet.dto.WalletRequest;
 import com.oasis.FIFAFanWallet.dto.WalletResponse;
+import com.oasis.FIFAFanWallet.enums.WalletStatus;
 import com.oasis.FIFAFanWallet.exception.UserNotFoundException;
 import com.oasis.FIFAFanWallet.exception.WalletAlreadyExistsException;
+import com.oasis.FIFAFanWallet.exception.WalletNotFoundException;
 import com.oasis.FIFAFanWallet.model.Wallet;
 import com.oasis.FIFAFanWallet.model.auth.User;
 import com.oasis.FIFAFanWallet.repo.UserRepository;
 import com.oasis.FIFAFanWallet.repo.WalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -39,8 +38,14 @@ public class WalletService {
         if(walletExists){
             throw new WalletAlreadyExistsException("Wallet already exists for this currency");
         }
-        Wallet wallet = new Wallet(walletRequest.currency(), BigDecimal.ZERO, user);
+        Wallet wallet = new Wallet(walletRequest.currency(), BigDecimal.ZERO, user, WalletStatus.ACTIVE);
         Wallet savedWallet = walletRepository.save(wallet);
         return new WalletResponse(savedWallet.getWalletId(), savedWallet.getBalance(), savedWallet.getCurrency());
+    }
+
+    public void disableUserWallet(UUID userId, UUID walletId) {
+        Wallet wallet = walletRepository.findByWalletIdAndUser_UserId(walletId, userId).orElseThrow(() -> new WalletNotFoundException("Wallet not found."));
+        wallet.setStatus(WalletStatus.DISABLED);
+        walletRepository.save(wallet);
     }
 }

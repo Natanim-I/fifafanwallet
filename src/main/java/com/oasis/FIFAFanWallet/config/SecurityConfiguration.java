@@ -29,11 +29,7 @@ public class SecurityConfiguration {
 
         http.csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(
-                        request -> request
-                                .requestMatchers("/api/user/register", "/api/auth/login", "/api/auth/refresh-token")
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated())
+                        request -> request.requestMatchers("/api/user/register", "/api/auth/login", "/api/auth/refresh-token").permitAll().anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
