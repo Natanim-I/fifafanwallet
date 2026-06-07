@@ -1,10 +1,10 @@
 package com.oasis.FIFAFanWallet.controller;
 
-import com.oasis.FIFAFanWallet.model.DTO.AuthResponse;
-import com.oasis.FIFAFanWallet.model.DTO.LoginRequest;
+import com.oasis.FIFAFanWallet.dto.AuthResponse;
+import com.oasis.FIFAFanWallet.dto.LoginRequest;
 
-import com.oasis.FIFAFanWallet.model.DTO.RefreshTokenRequest;
-import com.oasis.FIFAFanWallet.model.RefreshToken;
+import com.oasis.FIFAFanWallet.dto.RefreshTokenRequest;
+import com.oasis.FIFAFanWallet.model.auth.RefreshToken;
 import com.oasis.FIFAFanWallet.service.JwtService;
 import com.oasis.FIFAFanWallet.service.RefreshTokenService;
 import org.springframework.beans.factory.annotation.Autowired;

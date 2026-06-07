@@ -1,4 +1,4 @@
-package com.oasis.FIFAFanWallet.model.DTO;
+package com.oasis.FIFAFanWallet.dto;
 
 public record RefreshTokenRequest(String refreshToken)  {
 }

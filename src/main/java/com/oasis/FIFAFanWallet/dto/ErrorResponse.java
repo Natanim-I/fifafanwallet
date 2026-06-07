@@ -1,4 +1,4 @@
-package com.oasis.FIFAFanWallet.exception;
+package com.oasis.FIFAFanWallet.dto;
 
 public record ErrorResponse(int status, String message) {
 }

@@ -1,7 +1,7 @@
 package com.oasis.FIFAFanWallet.service;
 
 import com.oasis.FIFAFanWallet.exception.InvalidRefreshTokenException;
-import com.oasis.FIFAFanWallet.model.RefreshToken;
+import com.oasis.FIFAFanWallet.model.auth.RefreshToken;
 import com.oasis.FIFAFanWallet.repo.RefreshTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

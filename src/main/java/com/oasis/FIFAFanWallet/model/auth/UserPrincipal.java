@@ -1,7 +1,6 @@
-package com.oasis.FIFAFanWallet.model;
+package com.oasis.FIFAFanWallet.model.auth;
 
 import org.jspecify.annotations.Nullable;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,4 +1,4 @@
-package com.oasis.FIFAFanWallet.model;
+package com.oasis.FIFAFanWallet.model.auth;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

@@ -1,6 +1,6 @@
 package com.oasis.FIFAFanWallet.controller;
-import com.oasis.FIFAFanWallet.model.User;
-import com.oasis.FIFAFanWallet.model.DTO.UserResponse;
+import com.oasis.FIFAFanWallet.model.auth.User;
+import com.oasis.FIFAFanWallet.dto.UserResponse;
 import com.oasis.FIFAFanWallet.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,9 +19,6 @@ public class UserController {
 
     @PostMapping("register")
     public ResponseEntity<UserResponse> registerUser(@RequestBody User user) {
-        User registeredUser = userService.registerUser(user);
-        UserResponse userResponse = new UserResponse(
-                registeredUser.getUserId(), registeredUser.getEmail(), registeredUser.getFirstName(), registeredUser.getLastName(), registeredUser.getCountry());
-        return ResponseEntity.status(HttpStatus.CREATED).body(userResponse);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerUser(user));
     }
 }

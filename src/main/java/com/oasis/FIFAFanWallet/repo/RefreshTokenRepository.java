@@ -1,6 +1,6 @@
 package com.oasis.FIFAFanWallet.repo;
 
-import com.oasis.FIFAFanWallet.model.RefreshToken;
+import com.oasis.FIFAFanWallet.model.auth.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

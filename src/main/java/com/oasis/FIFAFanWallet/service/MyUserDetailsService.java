@@ -1,7 +1,7 @@
 package com.oasis.FIFAFanWallet.service;
 
-import com.oasis.FIFAFanWallet.model.User;
-import com.oasis.FIFAFanWallet.model.UserPrincipal;
+import com.oasis.FIFAFanWallet.model.auth.User;
+import com.oasis.FIFAFanWallet.model.auth.UserPrincipal;
 import com.oasis.FIFAFanWallet.repo.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
