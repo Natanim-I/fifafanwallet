@@ -4,14 +4,15 @@ import com.oasis.FIFAFanWallet.dto.UserResponse;
 import com.oasis.FIFAFanWallet.exception.UserAlreadyExistsException;
 import com.oasis.FIFAFanWallet.model.auth.User;
 import com.oasis.FIFAFanWallet.repo.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
+
+    private final UserRepository userRepository;
 
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 

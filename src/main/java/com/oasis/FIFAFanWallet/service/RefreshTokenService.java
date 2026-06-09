@@ -3,6 +3,7 @@ package com.oasis.FIFAFanWallet.service;
 import com.oasis.FIFAFanWallet.exception.InvalidRefreshTokenException;
 import com.oasis.FIFAFanWallet.model.auth.RefreshToken;
 import com.oasis.FIFAFanWallet.repo.RefreshTokenRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -11,13 +12,13 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class RefreshTokenService {
 
     @Value("${jwt.refresh-expiration}")
     private long refreshExpiration;
 
-    @Autowired
-    private RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     public RefreshToken createRefreshToken(String email){
         RefreshToken refreshToken = new RefreshToken();

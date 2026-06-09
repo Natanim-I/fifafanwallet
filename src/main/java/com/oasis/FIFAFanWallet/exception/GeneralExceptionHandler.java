@@ -1,6 +1,7 @@
 package com.oasis.FIFAFanWallet.exception;
 
 import com.oasis.FIFAFanWallet.dto.ErrorResponse;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -69,5 +70,15 @@ public class GeneralExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> illegalArgumentHandler(IllegalArgumentException ex){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(400, ex.getMessage()));
+    }
+
+    @ExceptionHandler(CurrencyExchangeException.class)
+    public ResponseEntity<ErrorResponse> currencyExchangeExceptionHandler(CurrencyExchangeException ex){
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(new ErrorResponse(503, ex.getMessage()));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex){
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(409, "Database constraints violation."));
     }
 }

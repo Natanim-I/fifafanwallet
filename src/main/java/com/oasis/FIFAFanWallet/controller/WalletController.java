@@ -3,6 +3,7 @@ package com.oasis.FIFAFanWallet.controller;
 import com.oasis.FIFAFanWallet.dto.WalletRequest;
 import com.oasis.FIFAFanWallet.dto.WalletResponse;
 import com.oasis.FIFAFanWallet.service.WalletService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +14,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class WalletController {
 
-    @Autowired
-    private WalletService walletService;
+    private final WalletService walletService;
 
     @GetMapping("/users/{userId}/wallets")
     public ResponseEntity<List<WalletResponse>> getUserWallets(@PathVariable UUID userId) {

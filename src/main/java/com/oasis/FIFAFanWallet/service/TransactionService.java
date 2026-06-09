@@ -1,5 +1,6 @@
 package com.oasis.FIFAFanWallet.service;
 
+import com.oasis.FIFAFanWallet.dto.ExchangeResponse;
 import com.oasis.FIFAFanWallet.dto.TransactionRequest;
 import com.oasis.FIFAFanWallet.dto.TransactionResponse;
 import com.oasis.FIFAFanWallet.dto.TransferResponse;
@@ -13,17 +14,19 @@ import com.oasis.FIFAFanWallet.model.Wallet;
 import com.oasis.FIFAFanWallet.repo.TransactionRepository;
 import com.oasis.FIFAFanWallet.repo.WalletRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class TransactionService {
-    @Autowired
-    private WalletRepository walletRepository;
-    @Autowired
-    private TransactionRepository transactionRepository;
+    private final WalletRepository walletRepository;
+    private final TransactionRepository transactionRepository;
+    private final ExchangeRateService exchangeRateService;
 
     @Transactional
     public TransactionResponse deposit(UUID walletId, TransactionRequest transactionRequest) {
@@ -76,7 +79,7 @@ public class TransactionService {
         wallet.setBalance(wallet.getBalance().subtract(transactionRequest.amount()));
         Transaction transaction = new Transaction();
         transaction.setAmount(transactionRequest.amount());
-        transaction.setType(TransactionType.DEPOSIT);
+        transaction.setType(TransactionType.WITHDRAW);
         transaction.setWallet(wallet);
         transaction.setStatus(TransactionStatus.SUCCESS);
 
@@ -106,6 +109,7 @@ public class TransactionService {
         if(!senderWallet.getUser().getEmail().equals(email)){
             throw new AccessDeniedException("Wallet doesn't belong to this user.");
         }
+
         if(senderWallet.getStatus() == WalletStatus.DISABLED || receiverWallet.getStatus() == WalletStatus.DISABLED){
             throw new WalletIsDisabledException("Wallet is disabled.");
         }
@@ -148,5 +152,68 @@ public class TransactionService {
                 sentTransaction.getStatus(),
                 sentTransaction.getCreatedAt()
         );
+    }
+
+    @Transactional
+    public ExchangeResponse exchange(UUID fromWalletId, UUID toWalletId, TransactionRequest transactionRequest) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if(fromWalletId.equals(toWalletId)){
+            throw new IllegalArgumentException("Exchange to the same wallet is not supported.");
+        }
+
+        Wallet fromWallet = walletRepository.findById(fromWalletId).orElseThrow(() -> new WalletNotFoundException("Wallet not found"));
+        Wallet toWallet = walletRepository.findById(toWalletId).orElseThrow(() -> new WalletNotFoundException("Wallet not found"));
+
+        if(!fromWallet.getUser().getEmail().equals(email)){
+            throw new AccessDeniedException("Wallet doesn't belong to this user.");
+        }
+
+        if(fromWallet.getStatus() == WalletStatus.DISABLED || toWallet.getStatus() == WalletStatus.DISABLED){
+            throw new WalletIsDisabledException("Wallet is Disabled.");
+        }
+
+        if(fromWallet.getCurrency().equals(toWallet.getCurrency())){
+            throw new java.lang.IllegalArgumentException("Exchange to the same currency wallet is not supported.");
+        }
+
+        if(fromWallet.getBalance().compareTo(transactionRequest.amount()) < 0){
+            throw new InsufficientFundsException("Insufficient funds.");
+        }
+
+        fromWallet.setBalance(fromWallet.getBalance().subtract(transactionRequest.amount()));
+        BigDecimal rate = exchangeRateService.getCurrencyExchangeRate(fromWallet.getCurrency(), toWallet.getCurrency());
+        BigDecimal convertedAmount = transactionRequest.amount().multiply(rate).setScale(2, RoundingMode.HALF_UP);
+        toWallet.setBalance(toWallet.getBalance().add(convertedAmount));
+
+        walletRepository.save(fromWallet);
+        walletRepository.save(toWallet);
+
+        Transaction exchangeOutTransaction = new Transaction();
+        exchangeOutTransaction.setAmount(transactionRequest.amount());
+        exchangeOutTransaction.setType(TransactionType.EXCHANGE_OUT);
+        exchangeOutTransaction.setStatus(TransactionStatus.SUCCESS);
+        exchangeOutTransaction.setWallet(fromWallet);
+
+        Transaction exchangeInTransaction = new Transaction();
+        exchangeInTransaction.setAmount(convertedAmount);
+        exchangeInTransaction.setType(TransactionType.EXCHANGE_IN);
+        exchangeInTransaction.setStatus(TransactionStatus.SUCCESS);
+        exchangeInTransaction.setWallet(toWallet);
+
+        transactionRepository.save(exchangeOutTransaction);
+        transactionRepository.save(exchangeInTransaction);
+
+        return new ExchangeResponse(
+                exchangeOutTransaction.getTransactionId(),
+                fromWallet.getWalletId(),
+                toWallet.getWalletId(),
+                fromWallet.getCurrency(),
+                toWallet.getCurrency(),
+                transactionRequest.amount(),
+                exchangeOutTransaction.getType(),
+                exchangeOutTransaction.getStatus(),
+                exchangeOutTransaction.getCreatedAt()
+                );
     }
 }

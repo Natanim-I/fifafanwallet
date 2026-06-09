@@ -10,18 +10,18 @@ import com.oasis.FIFAFanWallet.model.Wallet;
 import com.oasis.FIFAFanWallet.model.auth.User;
 import com.oasis.FIFAFanWallet.repo.UserRepository;
 import com.oasis.FIFAFanWallet.repo.WalletRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class WalletService {
-    @Autowired
-    private UserRepository userRepo;
-    @Autowired
-    private WalletRepository walletRepository;
+
+    private final UserRepository userRepo;
+    private final WalletRepository walletRepository;
 
     public List<WalletResponse> getUserWallets(UUID userId) {
         User user = userRepo.findByUserId(userId).orElseThrow(() -> new UserNotFoundException("User not found!"));
