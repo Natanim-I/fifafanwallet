@@ -169,6 +169,10 @@ public class TransactionService {
             throw new AccessDeniedException("Wallet doesn't belong to this user.");
         }
 
+        if(!fromWallet.getUser().getUserId().equals(toWallet.getUser().getUserId())){
+            throw new IllegalArgumentException("Exchange to different user wallet is not supported.");
+        }
+
         if(fromWallet.getStatus() == WalletStatus.DISABLED || toWallet.getStatus() == WalletStatus.DISABLED){
             throw new WalletIsDisabledException("Wallet is Disabled.");
         }
@@ -214,6 +218,6 @@ public class TransactionService {
                 exchangeOutTransaction.getType(),
                 exchangeOutTransaction.getStatus(),
                 exchangeOutTransaction.getCreatedAt()
-                );
+        );
     }
 }

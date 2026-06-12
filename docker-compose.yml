@@ -3,10 +3,15 @@ services:
     build: .
     ports:
       - "8080:8080"
-    entrypoint: ["java", "-jar", "fifa-fan-wallet.jar"]
     environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/fifa_fan_wallet
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
       JWT_REFRESH_EXPIRATION: ${JWT_REFRESH_EXPIRATION}
+    networks:
+      fifa-fan-wallet-network:
+
   postgres:
     image: postgres:latest
     ports:
@@ -14,4 +19,10 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_DB: fifa_fan_wallet
+    networks:
+      fifa-fan-wallet-network:
+
+networks:
+  fifa-fan-wallet-network:
+    driver: bridge

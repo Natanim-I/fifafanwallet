@@ -3,6 +3,7 @@ package com.oasis.FIFAFanWallet.service;
 import com.oasis.FIFAFanWallet.dto.WalletRequest;
 import com.oasis.FIFAFanWallet.dto.WalletResponse;
 import com.oasis.FIFAFanWallet.enums.WalletStatus;
+import com.oasis.FIFAFanWallet.exception.AccessDeniedException;
 import com.oasis.FIFAFanWallet.exception.UserNotFoundException;
 import com.oasis.FIFAFanWallet.exception.WalletAlreadyExistsException;
 import com.oasis.FIFAFanWallet.exception.WalletNotFoundException;
@@ -11,6 +12,7 @@ import com.oasis.FIFAFanWallet.model.auth.User;
 import com.oasis.FIFAFanWallet.repo.UserRepository;
 import com.oasis.FIFAFanWallet.repo.WalletRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.List;
@@ -24,7 +26,11 @@ public class WalletService {
     private final WalletRepository walletRepository;
 
     public List<WalletResponse> getUserWallets(UUID userId) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepo.findByUserId(userId).orElseThrow(() -> new UserNotFoundException("User not found!"));
+        if(!user.getEmail().equals(email)){
+            throw new AccessDeniedException("User doesn't have access.");
+        }
         List<Wallet> wallets = walletRepository.findAllByUser(user);
 
         return wallets.stream()
@@ -33,7 +39,13 @@ public class WalletService {
     }
 
     public WalletResponse createUserWallet(UUID userId, WalletRequest walletRequest) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepo.findByUserId(userId).orElseThrow(() -> new UserNotFoundException("User not found!"));
+
+        if(!user.getEmail().equals(email)){
+            throw new AccessDeniedException("User doesn't have access.");
+        }
+
         boolean walletExists = walletRepository.existsByUserAndCurrency(user, walletRequest.currency());
         if(walletExists){
             throw new WalletAlreadyExistsException("Wallet already exists for this currency");
