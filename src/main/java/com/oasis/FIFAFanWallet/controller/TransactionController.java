@@ -4,6 +4,7 @@ import com.oasis.FIFAFanWallet.dto.ExchangeResponse;
 import com.oasis.FIFAFanWallet.dto.TransactionRequest;
 import com.oasis.FIFAFanWallet.dto.TransactionResponse;
 import com.oasis.FIFAFanWallet.dto.TransferResponse;
+import com.oasis.FIFAFanWallet.enums.TransactionType;
 import com.oasis.FIFAFanWallet.model.Transaction;
 import com.oasis.FIFAFanWallet.service.TransactionService;
 import lombok.RequiredArgsConstructor;
@@ -43,9 +44,7 @@ public class TransactionController {
     }
 
     @GetMapping("/user/transactions")
-    public ResponseEntity<List<Transaction>> getAllTransactionsUser(){
-        return ResponseEntity.ok(transactionService.getAllTransactionUser());
+    public ResponseEntity<List<Transaction>> getAllTransactionsUser(@RequestParam(required = false)TransactionType type){
+        return ResponseEntity.ok(transactionService.getAllTransactionUser(type));
     }
-
-
 }

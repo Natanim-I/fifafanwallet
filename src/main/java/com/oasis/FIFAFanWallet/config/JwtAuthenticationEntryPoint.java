@@ -18,7 +18,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.getWriter().write("""
                 {
                     "status" : 401,
-                    "message" : "Authentication failed, Invalid or expired token."
+                    "message" : "Unauthorized."
                 }""");
     }
 }

@@ -1,5 +1,6 @@
 package com.oasis.FIFAFanWallet.repo;
 
+import com.oasis.FIFAFanWallet.enums.TransactionType;
 import com.oasis.FIFAFanWallet.model.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -10,4 +11,6 @@ import java.util.UUID;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, UUID> {
     List<Transaction> findByWalletUserUserId(UUID userId);
+
+    List<Transaction> findByWalletUserUserIdAndType(UUID userId, TransactionType type);
 }

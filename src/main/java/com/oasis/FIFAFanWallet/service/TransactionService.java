@@ -225,9 +225,12 @@ public class TransactionService {
         );
     }
 
-    public List<Transaction> getAllTransactionUser() {
+    public List<Transaction> getAllTransactionUser(TransactionType type) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found."));
-        return transactionRepository.findByWalletUserUserId(user.getUserId());
+        if(type == null)
+            return transactionRepository.findByWalletUserUserId(user.getUserId());
+        else
+            return transactionRepository.findByWalletUserUserIdAndType(user.getUserId(), type);
     }
 }
