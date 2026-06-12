@@ -4,6 +4,7 @@ import com.oasis.FIFAFanWallet.dto.ExchangeResponse;
 import com.oasis.FIFAFanWallet.dto.TransactionRequest;
 import com.oasis.FIFAFanWallet.dto.TransactionResponse;
 import com.oasis.FIFAFanWallet.dto.TransferResponse;
+import com.oasis.FIFAFanWallet.model.Transaction;
 import com.oasis.FIFAFanWallet.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -38,6 +40,11 @@ public class TransactionController {
     @PostMapping("/wallets/exchange/{fromWalletId}/{toWalletId}")
     public ResponseEntity<ExchangeResponse> exchange(@PathVariable UUID fromWalletId, @PathVariable UUID toWalletId, @RequestBody TransactionRequest transactionRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.exchange(fromWalletId, toWalletId, transactionRequest));
+    }
+
+    @GetMapping("/user/transactions")
+    public ResponseEntity<List<Transaction>> getAllTransactionsUser(){
+        return ResponseEntity.ok(transactionService.getAllTransactionUser());
     }
 
 

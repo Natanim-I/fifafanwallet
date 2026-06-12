@@ -1,5 +1,6 @@
 package com.oasis.FIFAFanWallet.service;
 
+import com.oasis.FIFAFanWallet.exception.UserNotFoundException;
 import com.oasis.FIFAFanWallet.model.auth.User;
 import com.oasis.FIFAFanWallet.model.auth.UserPrincipal;
 import com.oasis.FIFAFanWallet.repo.UserRepository;
@@ -18,7 +19,7 @@ public class MyUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepo.findByEmail(username);
+        User user = userRepo.findByEmail(username).orElseThrow(() -> new UserNotFoundException("User not found."));
         if(user == null){
             throw new UsernameNotFoundException(username);
         }

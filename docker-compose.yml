@@ -4,16 +4,18 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/fifa_fan_wallet
+      SPRING_DATASOURCE_URL: ${DB_URL}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
       JWT_REFRESH_EXPIRATION: ${JWT_REFRESH_EXPIRATION}
     networks:
       fifa-fan-wallet-network:
+    depends_on:
+      - postgres
 
   postgres:
-    image: postgres:latest
+    image: postgres:16
     ports:
       - "5432:5432"
     environment:
@@ -22,7 +24,12 @@ services:
       POSTGRES_DB: fifa_fan_wallet
     networks:
       fifa-fan-wallet-network:
+    volumes:
+      - fifa_fan_wallet_db_data:/var/lib/postgresql/data
 
 networks:
   fifa-fan-wallet-network:
     driver: bridge
+
+volumes:
+  fifa_fan_wallet_db_data:

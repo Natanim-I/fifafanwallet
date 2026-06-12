@@ -11,7 +11,9 @@ import com.oasis.FIFAFanWallet.exception.*;
 import com.oasis.FIFAFanWallet.exception.IllegalArgumentException;
 import com.oasis.FIFAFanWallet.model.Transaction;
 import com.oasis.FIFAFanWallet.model.Wallet;
+import com.oasis.FIFAFanWallet.model.auth.User;
 import com.oasis.FIFAFanWallet.repo.TransactionRepository;
+import com.oasis.FIFAFanWallet.repo.UserRepository;
 import com.oasis.FIFAFanWallet.repo.WalletRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -27,6 +30,7 @@ public class TransactionService {
     private final WalletRepository walletRepository;
     private final TransactionRepository transactionRepository;
     private final ExchangeRateService exchangeRateService;
+    private final UserRepository userRepository;
 
     @Transactional
     public TransactionResponse deposit(UUID walletId, TransactionRequest transactionRequest) {
@@ -219,5 +223,11 @@ public class TransactionService {
                 exchangeOutTransaction.getStatus(),
                 exchangeOutTransaction.getCreatedAt()
         );
+    }
+
+    public List<Transaction> getAllTransactionUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found."));
+        return transactionRepository.findByWalletUserUserId(user.getUserId());
     }
 }
