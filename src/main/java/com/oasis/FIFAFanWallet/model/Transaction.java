@@ -1,5 +1,6 @@
 package com.oasis.FIFAFanWallet.model;
 
+import com.oasis.FIFAFanWallet.enums.BudgetCategory;
 import com.oasis.FIFAFanWallet.enums.TransactionStatus;
 import com.oasis.FIFAFanWallet.enums.TransactionType;
 import jakarta.persistence.*;
@@ -25,6 +26,8 @@ public class Transaction {
     private Wallet wallet;
     @Enumerated(EnumType.STRING)
     private TransactionType type;
+    @Enumerated(EnumType.STRING)
+    private BudgetCategory category;
     @Enumerated(EnumType.STRING)
     private TransactionStatus status;
     private LocalDateTime createdAt;
