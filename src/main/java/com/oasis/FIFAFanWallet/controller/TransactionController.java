@@ -4,6 +4,7 @@ import com.oasis.FIFAFanWallet.dto.ExchangeResponse;
 import com.oasis.FIFAFanWallet.dto.TransactionRequest;
 import com.oasis.FIFAFanWallet.dto.TransactionResponse;
 import com.oasis.FIFAFanWallet.dto.TransferResponse;
+import com.oasis.FIFAFanWallet.enums.Currency;
 import com.oasis.FIFAFanWallet.enums.TransactionType;
 import com.oasis.FIFAFanWallet.model.Transaction;
 import com.oasis.FIFAFanWallet.service.TransactionService;
@@ -13,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,7 +47,12 @@ public class TransactionController {
     }
 
     @GetMapping("/user/transactions")
-    public ResponseEntity<List<Transaction>> getAllTransactionsUser(@RequestParam(required = false)TransactionType type){
-        return ResponseEntity.ok(transactionService.getAllTransactionUser(type));
+    public ResponseEntity<List<TransactionResponse>> getAllTransactionsUser(
+            @RequestParam(required = false)TransactionType type,
+            @RequestParam(required = false) Currency currency,
+            @RequestParam(required = false) LocalDateTime startDate,
+            @RequestParam(required = false) LocalDateTime endDate,
+            @RequestParam(required = false)BigDecimal amount){
+        return ResponseEntity.ok(transactionService.getAllTransactionUser(type, currency, startDate, endDate, amount));
     }
 }

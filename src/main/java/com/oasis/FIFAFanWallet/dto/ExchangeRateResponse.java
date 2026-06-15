@@ -1,5 +1,7 @@
 package com.oasis.FIFAFanWallet.dto;
 
+import jakarta.validation.constraints.Min;
+
 import java.math.BigDecimal;
 import java.util.Map;
 

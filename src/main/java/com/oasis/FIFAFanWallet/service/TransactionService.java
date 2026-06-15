@@ -4,6 +4,7 @@ import com.oasis.FIFAFanWallet.dto.ExchangeResponse;
 import com.oasis.FIFAFanWallet.dto.TransactionRequest;
 import com.oasis.FIFAFanWallet.dto.TransactionResponse;
 import com.oasis.FIFAFanWallet.dto.TransferResponse;
+import com.oasis.FIFAFanWallet.enums.Currency;
 import com.oasis.FIFAFanWallet.enums.TransactionStatus;
 import com.oasis.FIFAFanWallet.enums.TransactionType;
 import com.oasis.FIFAFanWallet.enums.WalletStatus;
@@ -21,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -225,12 +227,26 @@ public class TransactionService {
         );
     }
 
-    public List<Transaction> getAllTransactionUser(TransactionType type) {
+    public List<TransactionResponse> getAllTransactionUser(
+            TransactionType type,
+            Currency currency,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            BigDecimal amount)
+    {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found."));
-        if(type == null)
-            return transactionRepository.findByWalletUserUserId(user.getUserId());
-        else
-            return transactionRepository.findByWalletUserUserIdAndType(user.getUserId(), type);
+        List<Transaction> transactions = transactionRepository.searchTransactions(
+                user.getUserId(), type, currency, startDate, endDate, amount);
+
+        return transactions.stream()
+                .map(transaction -> new TransactionResponse(
+                        transaction.getTransactionId(),
+                        transaction.getWallet().getWalletId(),
+                        transaction.getAmount(),
+                        transaction.getType(),
+                        transaction.getStatus(),
+                        transaction.getCreatedAt()))
+                .toList();
     }
 }
