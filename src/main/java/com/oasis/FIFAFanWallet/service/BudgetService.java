@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -23,6 +24,37 @@ import java.util.UUID;
 public class BudgetService {
     private final UserRepository userRepository;
     private final BudgetRepository budgetRepository;
+
+    public List<BudgetResponse> getAllBudgets() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found"));
+        List<Budget> budgets = budgetRepository.findAllByUserId(user.getUserId()).orElseThrow(() -> new BudgetNotFoundException("Budget associated with this user not found."));
+
+        return budgets.stream()
+                .map(budget -> new BudgetResponse(
+                        budget.getBudgetId(),
+                        budget.getLimitAmount(),
+                        budget.getSpentAmount(),
+                        budget.getType(),
+                        budget.getStartDate(),
+                        budget.getEndDate()
+                )).toList();
+    }
+
+    public BudgetResponse getBudget(UUID budgetId) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found."));
+        Budget budget = budgetRepository.findByBudgetIdAndUserId(budgetId, user.getUserId()).orElseThrow(() -> new BudgetNotFoundException("Budget associated with this user not found."));
+
+        return new BudgetResponse(
+                budget.getBudgetId(),
+                budget.getLimitAmount(),
+                budget.getSpentAmount(),
+                budget.getType(),
+                budget.getStartDate(),
+                budget.getEndDate()
+        );
+    }
 
     @Transactional
     public BudgetResponse createBudget(BudgetRequest budgetRequest) {
@@ -44,15 +76,13 @@ public class BudgetService {
         budget.setStartDate(budgetRequest.startDate());
         budget.setEndDate(budgetRequest.endDate());
 
-        Budget savedBudget = budgetRepository.save(budget);
-
         return new BudgetResponse(
-                savedBudget.getBudgetId(),
-                savedBudget.getLimitAmount(),
-                savedBudget.getSpentAmount(),
-                savedBudget.getType(),
-                savedBudget.getStartDate(),
-                savedBudget.getEndDate()
+                budget.getBudgetId(),
+                budget.getLimitAmount(),
+                budget.getSpentAmount(),
+                budget.getType(),
+                budget.getStartDate(),
+                budget.getEndDate()
         );
     }
 
@@ -133,4 +163,11 @@ public class BudgetService {
             }
         }
     }
+
+    public void deleteBudget(UUID budgetId) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found."));
+        budgetRepository.findByBudgetIdAndUserId(budgetId, user.getUserId()).orElseThrow(() -> new BudgetNotFoundException("Budget not found."));
+    }
+
 }
