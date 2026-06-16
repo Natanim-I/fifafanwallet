@@ -34,10 +34,9 @@ public class TransactionService {
     @Transactional
     public TransactionResponse deposit(UUID walletId, TransactionRequest transactionRequest) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Wallet wallet = walletRepository.findById(walletId).orElseThrow(() -> new WalletNotFoundException("Wallet not found!"));
-        if(!wallet.getUser().getEmail().equals(email)){
-            throw new AccessDeniedException("Wallet doesn't belong to this user.");
-        }
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found."));
+        Wallet wallet = walletRepository.findByWalletIdAndUser(walletId, user).orElseThrow(() -> new WalletNotFoundException("Wallet associated with this user not found!"));
+
 
         if(wallet.getStatus() == WalletStatus.DISABLED){
             throw new IllegalStateException("Wallet is Disabled.");
@@ -66,10 +65,8 @@ public class TransactionService {
     @Transactional
     public TransactionResponse withdraw(UUID walletId, TransactionRequest transactionRequest){
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        Wallet wallet = walletRepository.findById(walletId).orElseThrow(() -> new WalletNotFoundException("Wallet not found!"));
-        if(!wallet.getUser().getEmail().equals(email)){
-            throw new AccessDeniedException("Wallet doesn't belong to this user.");
-        }
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found."));
+        Wallet wallet = walletRepository.findByWalletIdAndUser(walletId, user).orElseThrow(() -> new WalletNotFoundException("Wallet associated with this user not found!"));
 
         if(wallet.getStatus() == WalletStatus.DISABLED){
             throw new WalletIsDisabledException("Wallet is Disabled!");
@@ -101,17 +98,14 @@ public class TransactionService {
     @Transactional
     public TransferResponse transfer(UUID senderId, UUID receiverId, TransactionRequest transactionRequest) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found."));
 
         if(senderId.equals(receiverId)){
             throw new IllegalArgumentException("Transfer to the same account is not supported.");
         }
 
-        Wallet senderWallet = walletRepository.findById(senderId).orElseThrow(() -> new WalletNotFoundException("Wallet not found."));
-        Wallet receiverWallet = walletRepository.findById(receiverId).orElseThrow(() -> new WalletNotFoundException("Wallet not found."));
-
-        if(!senderWallet.getUser().getEmail().equals(email)){
-            throw new AccessDeniedException("Wallet doesn't belong to this user.");
-        }
+        Wallet senderWallet = walletRepository.findByWalletIdAndUser(senderId, user).orElseThrow(() -> new WalletNotFoundException("Wallet associated with this user not found."));
+        Wallet receiverWallet = walletRepository.findById(receiverId).orElseThrow(() -> new WalletNotFoundException("Destination wallet not found."));
 
         if(senderWallet.getStatus() == WalletStatus.DISABLED || receiverWallet.getStatus() == WalletStatus.DISABLED){
             throw new WalletIsDisabledException("Wallet is disabled.");
@@ -160,17 +154,14 @@ public class TransactionService {
     @Transactional
     public ExchangeResponse exchange(UUID fromWalletId, UUID toWalletId, TransactionRequest transactionRequest) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found."));
 
         if(fromWalletId.equals(toWalletId)){
             throw new IllegalArgumentException("Exchange to the same wallet is not supported.");
         }
 
-        Wallet fromWallet = walletRepository.findById(fromWalletId).orElseThrow(() -> new WalletNotFoundException("Wallet not found"));
-        Wallet toWallet = walletRepository.findById(toWalletId).orElseThrow(() -> new WalletNotFoundException("Wallet not found"));
-
-        if(!fromWallet.getUser().getEmail().equals(email)){
-            throw new AccessDeniedException("Wallet doesn't belong to this user.");
-        }
+        Wallet fromWallet = walletRepository.findByWalletIdAndUser(fromWalletId, user).orElseThrow(() -> new WalletNotFoundException("Wallet associated to this user not found"));
+        Wallet toWallet = walletRepository.findByWalletIdAndUser(toWalletId, user).orElseThrow(() -> new WalletNotFoundException("Wallet associated to this not found"));
 
         if(!fromWallet.getUser().getUserId().equals(toWallet.getUser().getUserId())){
             throw new IllegalArgumentException("Exchange to different user wallet is not supported.");

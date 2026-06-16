@@ -15,12 +15,12 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("register")
+    @PostMapping("/register")
     public ResponseEntity<UserResponse> registerUser(@RequestBody RegisterRequest user) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerUser(user));
     }
 
-    @GetMapping("user-details")
+    @GetMapping("/details")
     public ResponseEntity<UserResponse> getUserDetails(){
         return ResponseEntity.ok(userService.getUserDetails());
     }

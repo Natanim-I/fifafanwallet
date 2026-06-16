@@ -36,12 +36,12 @@ public class TransactionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.withdraw(walletId, transactionRequest));
     }
 
-    @PostMapping("/transfers/{senderId}/{receiverId}")
+    @PostMapping("/wallet/transfer/{senderId}/{receiverId}")
     public ResponseEntity<TransferResponse> transfer(@PathVariable UUID senderId, @PathVariable UUID receiverId, @RequestBody TransactionRequest transactionRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.transfer(senderId, receiverId, transactionRequest));
     }
 
-    @PostMapping("/wallets/exchange/{fromWalletId}/{toWalletId}")
+    @PostMapping("/wallet/exchange/{fromWalletId}/{toWalletId}")
     public ResponseEntity<ExchangeResponse> exchange(@PathVariable UUID fromWalletId, @PathVariable UUID toWalletId, @RequestBody TransactionRequest transactionRequest){
         return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.exchange(fromWalletId, toWalletId, transactionRequest));
     }

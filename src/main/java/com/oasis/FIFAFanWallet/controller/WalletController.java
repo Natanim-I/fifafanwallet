@@ -14,28 +14,28 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/user")
 @RequiredArgsConstructor
 public class WalletController {
 
     private final WalletService walletService;
 
-    @GetMapping("user/total-worth")
+    @GetMapping("/total-balance")
     public ResponseEntity<BigDecimal> calculateTotalBalance(){
         return ResponseEntity.ok(walletService.calculateTotalBalance());
     }
 
-    @GetMapping("/user/wallets")
+    @GetMapping("/wallets")
     public ResponseEntity<List<WalletResponse>> getUserWallets() {
         return ResponseEntity.ok(walletService.getUserWallets());
     }
 
-    @PostMapping("/user/wallet/create")
+    @PostMapping("/wallet/create")
     public ResponseEntity<WalletResponse> createWallet(@RequestBody WalletRequest walletRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(walletService.createUserWallet(walletRequest));
     }
 
-    @DeleteMapping("/users/wallets/{walletId}")
+    @DeleteMapping("/wallet/{walletId}/disable")
     public ResponseEntity<Void> disableUserWallet(@PathVariable UUID walletId){
         walletService.disableUserWallet(walletId);
         return ResponseEntity.noContent().build();

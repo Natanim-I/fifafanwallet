@@ -81,4 +81,9 @@ public class GeneralExceptionHandler {
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex){
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(409, "Database constraints violation."));
     }
+
+    @ExceptionHandler(BudgetNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleBudgetNotFound(BudgetNotFoundException ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404, ex.getMessage()));
+    }
 }

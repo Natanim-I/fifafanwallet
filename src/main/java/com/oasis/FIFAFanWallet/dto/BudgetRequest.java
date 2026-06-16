@@ -19,5 +19,4 @@ public record BudgetRequest(
         @NotNull(message = "End date is required.")
         @Future(message = "Budget end should be future date.")
         LocalDateTime endDate
-) {
-}
+) { }
