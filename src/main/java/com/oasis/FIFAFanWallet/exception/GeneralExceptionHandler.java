@@ -86,4 +86,9 @@ public class GeneralExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBudgetNotFound(BudgetNotFoundException ex){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404, ex.getMessage()));
     }
+
+    @ExceptionHandler(BudgetAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleBudgetExists(BudgetAlreadyExistsException ex){
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(409, ex.getMessage()));
+    }
 }

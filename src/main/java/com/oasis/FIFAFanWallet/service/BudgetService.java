@@ -2,6 +2,7 @@ package com.oasis.FIFAFanWallet.service;
 
 import com.oasis.FIFAFanWallet.dto.BudgetRequest;
 import com.oasis.FIFAFanWallet.dto.BudgetResponse;
+import com.oasis.FIFAFanWallet.exception.BudgetAlreadyExistsException;
 import com.oasis.FIFAFanWallet.exception.BudgetNotFoundException;
 import com.oasis.FIFAFanWallet.exception.IllegalArgumentException;
 import com.oasis.FIFAFanWallet.exception.UserNotFoundException;
@@ -36,6 +37,7 @@ public class BudgetService {
                         budget.getLimitAmount(),
                         budget.getSpentAmount(),
                         budget.getType(),
+                        budget.getCategory(),
                         budget.getStartDate(),
                         budget.getEndDate()
                 )).toList();
@@ -51,6 +53,7 @@ public class BudgetService {
                 budget.getLimitAmount(),
                 budget.getSpentAmount(),
                 budget.getType(),
+                budget.getCategory(),
                 budget.getStartDate(),
                 budget.getEndDate()
         );
@@ -65,10 +68,24 @@ public class BudgetService {
             throw new IllegalArgumentException("Start date must be before end date.");
         }
 
+        boolean exists = budgetRepository.existsOverlappingBudget(
+                user.getUserId(),
+                budgetRequest.category(),
+                budgetRequest.type(),
+                budgetRequest.startDate(),
+                budgetRequest.endDate()
+        );
+
+        if(exists){
+            throw new BudgetAlreadyExistsException("Overlapping budgets are not allowed.");
+        }
+
         Budget budget = new Budget();
         budget.setUserId(user.getUserId());
+        budget.setCurrency(budgetRequest.currency());
         budget.setLimitAmount(budgetRequest.limitAmount());
         budget.setSpentAmount(BigDecimal.ZERO);
+        budget.setCategory(budgetRequest.category());
 
         validateBudgetDates(budgetRequest);
 
@@ -76,13 +93,16 @@ public class BudgetService {
         budget.setStartDate(budgetRequest.startDate());
         budget.setEndDate(budgetRequest.endDate());
 
+        Budget savedBudget = budgetRepository.save(budget);
+
         return new BudgetResponse(
-                budget.getBudgetId(),
-                budget.getLimitAmount(),
-                budget.getSpentAmount(),
-                budget.getType(),
-                budget.getStartDate(),
-                budget.getEndDate()
+                savedBudget.getBudgetId(),
+                savedBudget.getLimitAmount(),
+                savedBudget.getSpentAmount(),
+                savedBudget.getType(),
+                savedBudget.getCategory(),
+                savedBudget.getStartDate(),
+                savedBudget.getEndDate()
         );
     }
 
@@ -96,6 +116,7 @@ public class BudgetService {
                 budget.getLimitAmount(),
                 budget.getSpentAmount(),
                 budget.getType(),
+                budget.getCategory(),
                 budget.getStartDate(),
                 budget.getEndDate()
         );
@@ -108,6 +129,8 @@ public class BudgetService {
 
         Budget budget = budgetRepository.findByBudgetIdAndUserId(budgetId, user.getUserId()).orElseThrow(() -> new BudgetNotFoundException("Budget not found."));
         budget.setLimitAmount(budgetRequest.limitAmount());
+        budget.setCategory(budgetRequest.category());
+        budget.setCurrency(budgetRequest.currency());
 
         if(budget.getStartDate().isAfter(LocalDateTime.now())){
             validateBudgetDates(budgetRequest);
@@ -121,6 +144,7 @@ public class BudgetService {
                 budget.getLimitAmount(),
                 budget.getSpentAmount(),
                 budget.getType(),
+                budget.getCategory(),
                 budget.getStartDate(),
                 budget.getEndDate()
         );
@@ -169,5 +193,4 @@ public class BudgetService {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found."));
         budgetRepository.findByBudgetIdAndUserId(budgetId, user.getUserId()).orElseThrow(() -> new BudgetNotFoundException("Budget not found."));
     }
-
 }

@@ -1,5 +1,6 @@
 package com.oasis.FIFAFanWallet.dto;
 
+import com.oasis.FIFAFanWallet.enums.BudgetCategory;
 import com.oasis.FIFAFanWallet.enums.BudgetPeriod;
 
 import java.math.BigDecimal;
@@ -11,6 +12,7 @@ public record BudgetResponse(
         BigDecimal limitAmount,
         BigDecimal spentAmount,
         BudgetPeriod type,
+        BudgetCategory category,
         LocalDateTime startDate,
         LocalDateTime endDate
 ) {}

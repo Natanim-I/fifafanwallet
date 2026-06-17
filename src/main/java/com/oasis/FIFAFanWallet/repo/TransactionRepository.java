@@ -18,11 +18,12 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
         SELECT t FROM Transaction t
         WHERE t.wallet.user.userId = :userId
         AND (:type IS NULL OR t.type = :type)
-        AND (:currency IS NULL OR t.currency = :currency)
+        AND (:currency IS NULL OR t.wallet.currency = :currency)
         AND (:startDate IS NULL OR t.createdAt >= :startDate)
         AND (:endDate IS NULL OR t.createdAt <= :endDate)
-        AND (:amount IS NULL OR t.amount >= :minAmount)
-        AND (:amount IS NULL OR t.amount <= :maxAmount)
+        AND (:minAmount IS NULL OR t.amount >= :minAmount)
+        AND (:maxAmount IS NULL OR t.amount <= :maxAmount)
+        AND (:amount IS NULL OR t.amount = :amount)
         ORDER BY t.createdAt
     """)
     List<Transaction> searchTransactions(
@@ -31,6 +32,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
             @Param("currency") Currency currency,
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate,
+            @Param("minAmount") BigDecimal minAmount,
+            @Param("maxAmount") BigDecimal maxAmount,
             @Param("amount") BigDecimal amount
-            );
+    );
 }

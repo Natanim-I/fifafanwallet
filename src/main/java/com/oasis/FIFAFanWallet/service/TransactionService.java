@@ -77,6 +77,7 @@ public class TransactionService {
         }
 
         wallet.setBalance(wallet.getBalance().subtract(transactionRequest.amount()));
+
         Transaction transaction = new Transaction();
         transaction.setAmount(transactionRequest.amount());
         transaction.setType(TransactionType.WITHDRAW);
@@ -121,9 +122,6 @@ public class TransactionService {
 
         senderWallet.setBalance(senderWallet.getBalance().subtract(transactionRequest.amount()));
         receiverWallet.setBalance(receiverWallet.getBalance().add(transactionRequest.amount()));
-
-        walletRepository.save(senderWallet);
-        walletRepository.save(receiverWallet);
 
         Transaction sentTransaction = new Transaction();
         sentTransaction.setAmount(transactionRequest.amount());
@@ -184,20 +182,17 @@ public class TransactionService {
         BigDecimal convertedAmount = transactionRequest.amount().multiply(rate).setScale(2, RoundingMode.HALF_UP);
         toWallet.setBalance(toWallet.getBalance().add(convertedAmount));
 
-        walletRepository.save(fromWallet);
-        walletRepository.save(toWallet);
-
         Transaction exchangeOutTransaction = new Transaction();
         exchangeOutTransaction.setAmount(transactionRequest.amount());
         exchangeOutTransaction.setType(TransactionType.EXCHANGE_OUT);
-        exchangeOutTransaction.setStatus(TransactionStatus.SUCCESS);
         exchangeOutTransaction.setWallet(fromWallet);
+        exchangeOutTransaction.setStatus(TransactionStatus.SUCCESS);
 
         Transaction exchangeInTransaction = new Transaction();
         exchangeInTransaction.setAmount(convertedAmount);
         exchangeInTransaction.setType(TransactionType.EXCHANGE_IN);
-        exchangeInTransaction.setStatus(TransactionStatus.SUCCESS);
         exchangeInTransaction.setWallet(toWallet);
+        exchangeInTransaction.setStatus(TransactionStatus.SUCCESS);
 
         transactionRepository.save(exchangeOutTransaction);
         transactionRepository.save(exchangeInTransaction);
@@ -220,12 +215,15 @@ public class TransactionService {
             Currency currency,
             LocalDateTime startDate,
             LocalDateTime endDate,
-            BigDecimal amount)
+            BigDecimal minAmount,
+            BigDecimal maxAmount,
+            BigDecimal amount
+    )
     {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found."));
         List<Transaction> transactions = transactionRepository.searchTransactions(
-                user.getUserId(), type, currency, startDate, endDate, amount);
+                user.getUserId(), type, currency, startDate, endDate, minAmount, maxAmount, amount);
 
         return transactions.stream()
                 .map(transaction -> new TransactionResponse(

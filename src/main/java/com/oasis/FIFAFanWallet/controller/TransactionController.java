@@ -52,7 +52,9 @@ public class TransactionController {
             @RequestParam(required = false) Currency currency,
             @RequestParam(required = false) LocalDateTime startDate,
             @RequestParam(required = false) LocalDateTime endDate,
-            @RequestParam(required = false)BigDecimal amount){
-        return ResponseEntity.ok(transactionService.getAllTransactionUser(type, currency, startDate, endDate, amount));
+            @RequestParam(required = false) BigDecimal minAmount,
+            @RequestParam(required = false) BigDecimal maxAmount,
+            @RequestParam(required = false) BigDecimal amount){
+        return ResponseEntity.ok(transactionService.getAllTransactionUser(type, currency, startDate, endDate, minAmount, maxAmount, amount));
     }
 }
