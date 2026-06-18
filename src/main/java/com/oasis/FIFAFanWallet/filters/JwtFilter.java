@@ -1,4 +1,4 @@
-package com.oasis.FIFAFanWallet.config;
+package com.oasis.FIFAFanWallet.filters;
 
 import com.oasis.FIFAFanWallet.service.JwtService;
 import com.oasis.FIFAFanWallet.service.MyUserDetailsService;
