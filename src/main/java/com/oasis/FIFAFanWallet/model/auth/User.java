@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -24,4 +25,7 @@ public class User {
     private String firstName;
     private String lastName;
     private String country;
+    private boolean enabled = false;
+    private String verificationToken;
+    private LocalDateTime tokenExpiry;
 }

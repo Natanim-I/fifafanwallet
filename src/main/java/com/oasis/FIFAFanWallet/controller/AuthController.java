@@ -7,20 +7,19 @@ import com.oasis.FIFAFanWallet.dto.RefreshTokenRequest;
 import com.oasis.FIFAFanWallet.model.auth.RefreshToken;
 import com.oasis.FIFAFanWallet.service.JwtService;
 import com.oasis.FIFAFanWallet.service.RefreshTokenService;
+import com.oasis.FIFAFanWallet.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@CrossOrigin()
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -30,6 +29,7 @@ public class AuthController {
     @PostMapping("login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password()));
+        
         String token = jwtService.generateToken(loginRequest.email());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(loginRequest.email());
         return ResponseEntity.ok(new AuthResponse(token, refreshToken.getToken()));

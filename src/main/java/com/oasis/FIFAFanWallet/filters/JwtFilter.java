@@ -46,7 +46,6 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         } catch (ExpiredJwtException | SignatureException ex) {
             SecurityContextHolder.clearContext();
-            throw ex;
         }
         filterChain.doFilter(request, response);
     }

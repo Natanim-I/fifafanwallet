@@ -14,6 +14,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/user/budget")
+@CrossOrigin()
 public class BudgetController {
     private final BudgetService budgetService;
 

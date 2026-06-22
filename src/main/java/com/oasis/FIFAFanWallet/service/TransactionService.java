@@ -13,6 +13,7 @@ import com.oasis.FIFAFanWallet.model.auth.User;
 import com.oasis.FIFAFanWallet.repo.TransactionRepository;
 import com.oasis.FIFAFanWallet.repo.UserRepository;
 import com.oasis.FIFAFanWallet.repo.WalletRepository;
+import com.oasis.FIFAFanWallet.specification.TransactionSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -222,8 +223,10 @@ public class TransactionService {
     {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found."));
-        List<Transaction> transactions = transactionRepository.searchTransactions(
-                user.getUserId(), type, currency, startDate, endDate, minAmount, maxAmount, amount);
+        List<Transaction> transactions = transactionRepository.findAll(
+                TransactionSpecification.filter(
+                        user.getUserId(), type, currency, startDate, endDate, minAmount, maxAmount, amount)
+        );
 
         return transactions.stream()
                 .map(transaction -> new TransactionResponse(

@@ -44,6 +44,7 @@ public interface BudgetRepository extends JpaRepository<Budget, UUID> {
             UUID userId,
             BudgetCategory category,
             BudgetPeriod type,
-            LocalDateTime localDateTime,
-            LocalDateTime localDateTime1);
+            LocalDateTime startDate,
+            LocalDateTime endDate
+    );
 }

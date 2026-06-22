@@ -1,6 +1,8 @@
 package com.oasis.FIFAFanWallet.repo;
 
 import com.oasis.FIFAFanWallet.model.auth.User;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,5 +15,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     boolean existsByEmail(String email);
 
-    Optional<User> findByUserId(UUID userId);
+    Optional<User> findByVerificationToken(String verificationToken);
+    Optional<User> findByEmailAndVerificationToken(String email, String verificationToken);
 }

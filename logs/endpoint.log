@@ -1,0 +1,168 @@
+2026-06-21 13:01:31 INFO  - ➡️ Incoming request: POST /api/user/register
+2026-06-21 13:01:35 INFO  - ⬅️ Completed: POST /api/user/register in 3933 ms with status 201
+2026-06-21 13:02:24 INFO  - ➡️ Incoming request: POST /api/auth/login
+2026-06-21 13:02:25 INFO  - ⬅️ Completed: POST /api/auth/login in 1175 ms with status 200
+2026-06-21 13:02:25 INFO  - ➡️ Incoming request: GET /api/user/details
+2026-06-21 13:02:25 INFO  - ⬅️ Completed: GET /api/user/details in 6 ms with status 200
+2026-06-21 13:02:25 INFO  - ➡️ Incoming request: GET /api/user/total-balance
+2026-06-21 13:02:25 INFO  - ➡️ Incoming request: GET /api/user/transactions
+2026-06-21 13:02:25 INFO  - ➡️ Incoming request: GET /api/user/wallets
+2026-06-21 13:02:25 INFO  - ➡️ Incoming request: GET /api/user/budget/all
+2026-06-21 13:02:25 INFO  - ⬅️ Completed: GET /api/user/total-balance in 25 ms with status 200
+2026-06-21 13:02:25 INFO  - ⬅️ Completed: GET /api/user/wallets in 31 ms with status 200
+2026-06-21 13:02:25 INFO  - ⬅️ Completed: GET /api/user/budget/all in 32 ms with status 200
+2026-06-21 13:02:25 INFO  - ➡️ Incoming request: GET /api/user/total-balance
+2026-06-21 13:02:25 INFO  - ⬅️ Completed: GET /api/user/total-balance in 7 ms with status 200
+2026-06-21 13:02:25 INFO  - ➡️ Incoming request: GET /api/user/wallets
+2026-06-21 13:02:25 INFO  - ➡️ Incoming request: GET /api/user/budget/all
+2026-06-21 13:02:25 INFO  - ⬅️ Completed: GET /api/user/wallets in 9 ms with status 200
+2026-06-21 13:02:25 INFO  - ⬅️ Completed: GET /api/user/budget/all in 8 ms with status 200
+2026-06-21 13:02:25 INFO  - ⬅️ Completed: GET /api/user/transactions in 72 ms with status 200
+2026-06-21 13:02:25 INFO  - ➡️ Incoming request: GET /api/user/transactions
+2026-06-21 13:02:25 INFO  - ⬅️ Completed: GET /api/user/transactions in 7 ms with status 200
+2026-06-21 21:12:49 INFO  - ➡️ Incoming request: POST /api/auth/login
+2026-06-21 21:12:51 INFO  - ⬅️ Completed: POST /api/auth/login in 1370 ms with status 404
+2026-06-21 21:13:24 INFO  - ➡️ Incoming request: POST /api/user/register
+2026-06-21 21:13:27 INFO  - ⬅️ Completed: POST /api/user/register in 3052 ms with status 201
+2026-06-21 21:13:45 INFO  - ➡️ Incoming request: POST /api/auth/login
+2026-06-21 21:13:46 INFO  - ⬅️ Completed: POST /api/auth/login in 546 ms with status 401
+2026-06-21 21:13:50 INFO  - ➡️ Incoming request: POST /api/auth/login
+2026-06-21 21:13:50 INFO  - ⬅️ Completed: POST /api/auth/login in 704 ms with status 200
+2026-06-21 21:13:51 INFO  - ➡️ Incoming request: GET /api/user/details
+2026-06-21 21:13:51 INFO  - ⬅️ Completed: GET /api/user/details in 10 ms with status 200
+2026-06-21 21:13:51 INFO  - ➡️ Incoming request: GET /api/user/budget/all
+2026-06-21 21:13:51 INFO  - ➡️ Incoming request: GET /api/user/total-balance
+2026-06-21 21:13:51 INFO  - ➡️ Incoming request: GET /api/user/transactions
+2026-06-21 21:13:51 INFO  - ➡️ Incoming request: GET /api/user/wallets
+2026-06-21 21:13:51 INFO  - ⬅️ Completed: GET /api/user/total-balance in 38 ms with status 200
+2026-06-21 21:13:51 INFO  - ⬅️ Completed: GET /api/user/wallets in 84 ms with status 200
+2026-06-21 21:13:51 INFO  - ⬅️ Completed: GET /api/user/budget/all in 89 ms with status 200
+2026-06-21 21:13:51 INFO  - ➡️ Incoming request: GET /api/user/total-balance
+2026-06-21 21:13:51 INFO  - ➡️ Incoming request: GET /api/user/budget/all
+2026-06-21 21:13:51 INFO  - ➡️ Incoming request: GET /api/user/wallets
+2026-06-21 21:13:51 INFO  - ⬅️ Completed: GET /api/user/total-balance in 12 ms with status 200
+2026-06-21 21:13:51 INFO  - ⬅️ Completed: GET /api/user/wallets in 7 ms with status 200
+2026-06-21 21:13:51 INFO  - ⬅️ Completed: GET /api/user/budget/all in 8 ms with status 200
+2026-06-21 21:13:51 INFO  - ⬅️ Completed: GET /api/user/transactions in 137 ms with status 200
+2026-06-21 21:13:51 INFO  - ➡️ Incoming request: GET /api/user/transactions
+2026-06-21 21:13:51 INFO  - ⬅️ Completed: GET /api/user/transactions in 10 ms with status 200
+2026-06-21 21:32:42 INFO  - ➡️ Incoming request: GET /api/user/wallets
+2026-06-21 21:32:42 INFO  - ➡️ Incoming request: GET /api/user/details
+2026-06-21 21:32:42 INFO  - ➡️ Incoming request: GET /api/user/total-balance
+2026-06-21 21:32:42 INFO  - ➡️ Incoming request: GET /api/user/budget/all
+2026-06-21 21:32:42 INFO  - ⬅️ Completed: GET /api/user/total-balance in 111 ms with status 200
+2026-06-21 21:32:42 INFO  - ➡️ Incoming request: GET /api/user/total-balance
+2026-06-21 21:32:42 INFO  - ⬅️ Completed: GET /api/user/total-balance in 8 ms with status 200
+2026-06-21 21:32:42 INFO  - ⬅️ Completed: GET /api/user/details in 170 ms with status 200
+2026-06-21 21:32:42 INFO  - ⬅️ Completed: GET /api/user/wallets in 170 ms with status 200
+2026-06-21 21:32:42 INFO  - ⬅️ Completed: GET /api/user/budget/all in 170 ms with status 200
+2026-06-21 21:32:42 INFO  - ➡️ Incoming request: GET /api/user/wallets
+2026-06-21 21:32:42 INFO  - ➡️ Incoming request: GET /api/user/budget/all
+2026-06-21 21:32:42 INFO  - ➡️ Incoming request: GET /api/user/details
+2026-06-21 21:32:42 INFO  - ⬅️ Completed: GET /api/user/details in 6 ms with status 200
+2026-06-21 21:32:42 INFO  - ⬅️ Completed: GET /api/user/budget/all in 9 ms with status 200
+2026-06-21 21:32:42 INFO  - ⬅️ Completed: GET /api/user/wallets in 11 ms with status 200
+2026-06-21 21:33:06 INFO  - ➡️ Incoming request: POST /api/user/register
+2026-06-21 21:33:06 INFO  - ⬅️ Completed: POST /api/user/register in 183 ms with status 409
+2026-06-21 21:33:14 INFO  - ➡️ Incoming request: POST /api/user/register
+2026-06-21 21:33:17 INFO  - ⬅️ Completed: POST /api/user/register in 2843 ms with status 201
+2026-06-21 21:33:35 INFO  - ➡️ Incoming request: POST /api/auth/login
+2026-06-21 21:33:36 INFO  - ⬅️ Completed: POST /api/auth/login in 989 ms with status 403
+2026-06-21 21:35:23 INFO  - ➡️ Incoming request: POST /api/auth/login
+2026-06-21 21:35:23 INFO  - ⬅️ Completed: POST /api/auth/login in 539 ms with status 403
+2026-06-21 21:36:20 INFO  - ➡️ Incoming request: POST /api/auth/login
+2026-06-21 21:36:20 INFO  - ⬅️ Completed: POST /api/auth/login in 501 ms with status 403
+2026-06-21 21:36:49 INFO  - ➡️ Incoming request: POST /api/auth/login
+2026-06-21 21:36:50 INFO  - ⬅️ Completed: POST /api/auth/login in 1345 ms with status 403
+2026-06-21 21:38:28 INFO  - ➡️ Incoming request: POST /api/auth/login
+2026-06-21 21:38:29 INFO  - ⬅️ Completed: POST /api/auth/login in 765 ms with status 200
+2026-06-21 21:38:29 INFO  - ➡️ Incoming request: GET /api/user/details
+2026-06-21 21:38:29 INFO  - ⬅️ Completed: GET /api/user/details in 9 ms with status 200
+2026-06-21 21:38:29 INFO  - ➡️ Incoming request: GET /api/user/budget/all
+2026-06-21 21:38:29 INFO  - ➡️ Incoming request: GET /api/user/total-balance
+2026-06-21 21:38:29 INFO  - ➡️ Incoming request: GET /api/user/wallets
+2026-06-21 21:38:29 INFO  - ➡️ Incoming request: GET /api/user/transactions
+2026-06-21 21:38:29 INFO  - ⬅️ Completed: GET /api/user/total-balance in 29 ms with status 200
+2026-06-21 21:38:29 INFO  - ⬅️ Completed: GET /api/user/budget/all in 46 ms with status 200
+2026-06-21 21:38:29 INFO  - ⬅️ Completed: GET /api/user/wallets in 44 ms with status 200
+2026-06-21 21:38:29 INFO  - ➡️ Incoming request: GET /api/user/total-balance
+2026-06-21 21:38:29 INFO  - ⬅️ Completed: GET /api/user/total-balance in 10 ms with status 200
+2026-06-21 21:38:29 INFO  - ➡️ Incoming request: GET /api/user/wallets
+2026-06-21 21:38:29 INFO  - ➡️ Incoming request: GET /api/user/budget/all
+2026-06-21 21:38:29 INFO  - ⬅️ Completed: GET /api/user/wallets in 11 ms with status 200
+2026-06-21 21:38:29 INFO  - ⬅️ Completed: GET /api/user/budget/all in 11 ms with status 200
+2026-06-21 21:38:29 INFO  - ⬅️ Completed: GET /api/user/transactions in 96 ms with status 200
+2026-06-21 21:38:29 INFO  - ➡️ Incoming request: GET /api/user/transactions
+2026-06-21 21:38:29 INFO  - ⬅️ Completed: GET /api/user/transactions in 20 ms with status 200
+2026-06-21 21:38:50 INFO  - ➡️ Incoming request: GET /api/user/wallets
+2026-06-21 21:38:50 INFO  - ⬅️ Completed: GET /api/user/wallets in 6 ms with status 200
+2026-06-21 21:38:50 INFO  - ➡️ Incoming request: GET /api/user/wallets
+2026-06-21 21:38:50 INFO  - ⬅️ Completed: GET /api/user/wallets in 9 ms with status 200
+2026-06-21 21:38:52 INFO  - ➡️ Incoming request: GET /api/user/transactions
+2026-06-21 21:38:52 INFO  - ⬅️ Completed: GET /api/user/transactions in 13 ms with status 200
+2026-06-21 21:38:52 INFO  - ➡️ Incoming request: GET /api/user/transactions
+2026-06-21 21:38:52 INFO  - ⬅️ Completed: GET /api/user/transactions in 16 ms with status 200
+2026-06-21 21:38:53 INFO  - ➡️ Incoming request: GET /api/user/budget/all
+2026-06-21 21:38:53 INFO  - ⬅️ Completed: GET /api/user/budget/all in 9 ms with status 200
+2026-06-21 21:38:53 INFO  - ➡️ Incoming request: GET /api/user/budget/all
+2026-06-21 21:38:53 INFO  - ⬅️ Completed: GET /api/user/budget/all in 8 ms with status 200
+2026-06-21 21:39:11 INFO  - ➡️ Incoming request: GET /api/user/wallets
+2026-06-21 21:39:11 INFO  - ⬅️ Completed: GET /api/user/wallets in 5 ms with status 200
+2026-06-21 21:39:11 INFO  - ➡️ Incoming request: GET /api/user/wallets
+2026-06-21 21:39:11 INFO  - ⬅️ Completed: GET /api/user/wallets in 4 ms with status 200
+2026-06-21 21:39:13 INFO  - ➡️ Incoming request: GET /api/user/transactions
+2026-06-21 21:39:13 INFO  - ⬅️ Completed: GET /api/user/transactions in 10 ms with status 200
+2026-06-21 21:39:13 INFO  - ➡️ Incoming request: GET /api/user/transactions
+2026-06-21 21:39:13 INFO  - ⬅️ Completed: GET /api/user/transactions in 13 ms with status 200
+2026-06-21 21:39:14 INFO  - ➡️ Incoming request: GET /api/user/wallets
+2026-06-21 21:39:14 INFO  - ⬅️ Completed: GET /api/user/wallets in 6 ms with status 200
+2026-06-21 21:39:14 INFO  - ➡️ Incoming request: GET /api/user/wallets
+2026-06-21 21:39:14 INFO  - ⬅️ Completed: GET /api/user/wallets in 6 ms with status 200
+2026-06-21 21:39:20 INFO  - ➡️ Incoming request: GET /api/user/budget/all
+2026-06-21 21:39:20 INFO  - ⬅️ Completed: GET /api/user/budget/all in 10 ms with status 200
+2026-06-21 21:39:20 INFO  - ➡️ Incoming request: GET /api/user/budget/all
+2026-06-21 21:39:20 INFO  - ⬅️ Completed: GET /api/user/budget/all in 8 ms with status 200
+2026-06-21 21:39:20 INFO  - ➡️ Incoming request: GET /api/user/transactions
+2026-06-21 21:39:20 INFO  - ⬅️ Completed: GET /api/user/transactions in 14 ms with status 200
+2026-06-21 21:39:20 INFO  - ➡️ Incoming request: GET /api/user/transactions
+2026-06-21 21:39:20 INFO  - ⬅️ Completed: GET /api/user/transactions in 12 ms with status 200
+2026-06-21 21:39:21 INFO  - ➡️ Incoming request: GET /api/user/wallets
+2026-06-21 21:39:21 INFO  - ⬅️ Completed: GET /api/user/wallets in 6 ms with status 200
+2026-06-21 21:39:21 INFO  - ➡️ Incoming request: GET /api/user/wallets
+2026-06-21 21:39:21 INFO  - ⬅️ Completed: GET /api/user/wallets in 7 ms with status 200
+2026-06-21 21:39:22 INFO  - ➡️ Incoming request: GET /api/user/wallets
+2026-06-21 21:39:22 INFO  - ➡️ Incoming request: GET /api/user/total-balance
+2026-06-21 21:39:22 INFO  - ➡️ Incoming request: GET /api/user/budget/all
+2026-06-21 21:39:22 INFO  - ➡️ Incoming request: GET /api/user/transactions
+2026-06-21 21:39:22 INFO  - ⬅️ Completed: GET /api/user/budget/all in 6 ms with status 200
+2026-06-21 21:39:22 INFO  - ⬅️ Completed: GET /api/user/wallets in 6 ms with status 200
+2026-06-21 21:39:22 INFO  - ⬅️ Completed: GET /api/user/total-balance in 6 ms with status 200
+2026-06-21 21:39:22 INFO  - ⬅️ Completed: GET /api/user/transactions in 9 ms with status 200
+2026-06-21 21:39:22 INFO  - ➡️ Incoming request: GET /api/user/budget/all
+2026-06-21 21:39:22 INFO  - ➡️ Incoming request: GET /api/user/total-balance
+2026-06-21 21:39:22 INFO  - ➡️ Incoming request: GET /api/user/wallets
+2026-06-21 21:39:22 INFO  - ➡️ Incoming request: GET /api/user/transactions
+2026-06-21 21:39:22 INFO  - ⬅️ Completed: GET /api/user/total-balance in 8 ms with status 200
+2026-06-21 21:39:22 INFO  - ⬅️ Completed: GET /api/user/budget/all in 10 ms with status 200
+2026-06-21 21:39:22 INFO  - ⬅️ Completed: GET /api/user/wallets in 9 ms with status 200
+2026-06-21 21:39:22 INFO  - ⬅️ Completed: GET /api/user/transactions in 14 ms with status 200
+2026-06-21 21:40:22 INFO  - ➡️ Incoming request: GET /api/user/details
+2026-06-21 21:40:22 INFO  - ⬅️ Completed: GET /api/user/details in 4 ms with status 200
+2026-06-21 21:40:22 INFO  - ➡️ Incoming request: GET /api/user/details
+2026-06-21 21:40:22 INFO  - ⬅️ Completed: GET /api/user/details in 4 ms with status 200
+2026-06-21 21:40:22 INFO  - ➡️ Incoming request: GET /api/user/total-balance
+2026-06-21 21:40:22 INFO  - ➡️ Incoming request: GET /api/user/budget/all
+2026-06-21 21:40:22 INFO  - ➡️ Incoming request: GET /api/user/wallets
+2026-06-21 21:40:22 INFO  - ➡️ Incoming request: GET /api/user/transactions
+2026-06-21 21:40:22 INFO  - ⬅️ Completed: GET /api/user/total-balance in 5 ms with status 200
+2026-06-21 21:40:22 INFO  - ⬅️ Completed: GET /api/user/wallets in 5 ms with status 200
+2026-06-21 21:40:22 INFO  - ⬅️ Completed: GET /api/user/budget/all in 5 ms with status 200
+2026-06-21 21:40:22 INFO  - ⬅️ Completed: GET /api/user/transactions in 12 ms with status 200
+2026-06-21 21:40:22 INFO  - ➡️ Incoming request: GET /api/user/total-balance
+2026-06-21 21:40:22 INFO  - ➡️ Incoming request: GET /api/user/wallets
+2026-06-21 21:40:22 INFO  - ➡️ Incoming request: GET /api/user/budget/all
+2026-06-21 21:40:22 INFO  - ⬅️ Completed: GET /api/user/total-balance in 6 ms with status 200
+2026-06-21 21:40:22 INFO  - ➡️ Incoming request: GET /api/user/transactions
+2026-06-21 21:40:22 INFO  - ⬅️ Completed: GET /api/user/wallets in 8 ms with status 200
+2026-06-21 21:40:22 INFO  - ⬅️ Completed: GET /api/user/budget/all in 6 ms with status 200
+2026-06-21 21:40:22 INFO  - ⬅️ Completed: GET /api/user/transactions in 13 ms with status 200

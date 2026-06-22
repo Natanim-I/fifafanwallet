@@ -11,6 +11,7 @@ A Spring Boot REST API for managing multi-currency digital wallets, built for FI
 - **Live exchange rates** — Fetched from the [Frankfurter API](https://api.frankfurter.dev)
 - **Category-based budgets** — Create budgets by spending category and period, with overlap protection and period validation
 - **Merchant payments** — Pay from a wallet, record the transaction, and automatically update the matching active budget (with cross-currency conversion when needed)
+- **Structured logging** — Request/response timing via servlet filter, AOP-based service audit logs, and separate rolling log files for app, endpoint, and error output
 
 ## Tech Stack
 
@@ -20,6 +21,7 @@ A Spring Boot REST API for managing multi-currency digital wallets, built for FI
 | Framework | Spring Boot 4.0.6 |
 | Security | Spring Security + JWT (jjwt 0.13) |
 | Persistence | Spring Data JPA + PostgreSQL 16 |
+| Logging | Logback + Spring AOP (AspectJ) |
 | Build | Maven |
 | Containerization | Docker + Docker Compose |
 
@@ -119,7 +121,7 @@ Authorization: Bearer <access_token>
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `GET` | `/api/user/wallets` | List all wallets for the current user |
-| `GET` | `/api/user/total-balance` | Get aggregated balance across wallets |
+| `GET` | `/api/user/total-balance` | Get total balance across all wallets, converted to USD via live exchange rates |
 | `POST` | `/api/user/wallet/create` | Create a new wallet |
 | `DELETE` | `/api/user/wallet/{walletId}/disable` | Disable a wallet |
 
@@ -252,15 +254,71 @@ Example response (`201 Created`):
 
 `PENDING`, `COMPLETED`, `FAILED`, `REFUNDED`
 
+## Logging & Observability
+
+The application uses a two-layer logging setup configured in `src/main/resources/logback.xml`.
+
+### Request logging (`RequestLoggingFilter`)
+
+Every HTTP request is logged on entry and completion, including method, URI, response status, and elapsed time. Output goes to the `ENDPOINT_LOGGER` logger.
+
+### Service logging (`LoggingAspect`)
+
+Spring AOP advice records key business events and failures across the service layer:
+
+| Event | Logged details |
+|-------|----------------|
+| User registration | User ID |
+| Wallet create / disable | Wallet ID |
+| Deposit / withdraw | Transaction ID |
+| Transfer / exchange | Transaction ID |
+| Budget create / update / delete | Budget ID |
+| Payment | Payment ID |
+| Service errors | Method name and exception |
+
+### Log files
+
+Logs are written to the `logs/` directory at the project root (created automatically at runtime):
+
+| File | Logger | Contents |
+|------|--------|----------|
+| `logs/app.log` | `APP_LOGGER` | Service-layer audit events |
+| `logs/endpoint.log` | `ENDPOINT_LOGGER` | HTTP request/response timing |
+| `logs/error.log` | `ERROR_LOGGER` | Service-layer exceptions |
+
+All files roll daily and are retained for 30 days. Console output remains enabled for local development.
+
+## Error Handling
+
+API errors are returned as a consistent JSON shape via `GeneralExceptionHandler`:
+
+```json
+{
+  "status": 404,
+  "message": "Budget not found."
+}
+```
+
+| HTTP Status | Typical causes |
+|-------------|----------------|
+| `400` | Invalid arguments (e.g. same-wallet transfer, invalid budget dates) |
+| `401` | Invalid credentials or refresh token |
+| `403` | Access denied |
+| `404` | User, wallet, or budget not found |
+| `409` | Duplicate user/wallet/budget, insufficient funds, disabled wallet |
+| `503` | Exchange rate API unavailable |
+
 ## Project Structure
 
 ```
 src/main/java/com/oasis/FIFAFanWallet/
-├── config/          # Security, JWT filter, REST client setup
+├── aop/             # AOP logging aspect for service-layer audit trails
+├── config/          # Security, REST client setup
 ├── controller/      # REST API endpoints
 ├── dto/             # Request/response records
 ├── enums/           # Currency, budget category, transaction types, payment status, etc.
 ├── exception/       # Custom exceptions and global handler
+├── filters/         # JWT authentication and request logging filters
 ├── model/           # JPA entities (User, Wallet, Transaction, Budget, Payment)
 ├── repo/            # Spring Data repositories
 └── service/         # Business logic

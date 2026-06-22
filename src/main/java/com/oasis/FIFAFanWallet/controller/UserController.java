@@ -1,5 +1,6 @@
 package com.oasis.FIFAFanWallet.controller;
 import com.oasis.FIFAFanWallet.dto.RegisterRequest;
+import com.oasis.FIFAFanWallet.dto.VerificationRequest;
 import com.oasis.FIFAFanWallet.model.auth.User;
 import com.oasis.FIFAFanWallet.dto.UserResponse;
 import com.oasis.FIFAFanWallet.service.UserService;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
+@CrossOrigin()
 public class UserController {
 
     private final UserService userService;
@@ -18,6 +20,16 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<UserResponse> registerUser(@RequestBody RegisterRequest user) {
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerUser(user));
+    }
+
+    @GetMapping("verify")
+    public ResponseEntity<String> verify(@RequestParam String verificationToken){
+        return ResponseEntity.ok(userService.verifyAccount(verificationToken));
+    }
+
+    @PostMapping("resend-verification")
+    public ResponseEntity<String> resendVerificationEmail(@RequestBody VerificationRequest verificationRequest){
+        return ResponseEntity.ok(userService.resendVerificationEmail(verificationRequest));
     }
 
     @GetMapping("/details")

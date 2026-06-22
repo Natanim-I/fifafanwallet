@@ -22,6 +22,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
+@CrossOrigin()
 public class TransactionController {
 
     private final TransactionService transactionService;
