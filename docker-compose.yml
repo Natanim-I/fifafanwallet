@@ -1,6 +1,7 @@
 services:
   app:
     build: .
+    restart: unless-stopped
     ports:
       - "8080:8080"
     environment:
@@ -18,12 +19,11 @@ services:
 
   postgres:
     image: postgres:16
-    ports:
-      - "5432:5432"
+    restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: etete_pay
+      POSTGRES_DB: etete-pay
     networks:
       etete-pay-network:
     volumes:
