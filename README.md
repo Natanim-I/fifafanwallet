@@ -1,10 +1,12 @@
 # FIFA Fan Wallet
 
-A Spring Boot REST API for managing multi-currency digital wallets, built for FIFA fans planning trips and tracking match-day spending. Users can register, hold wallets in multiple currencies, transfer funds, exchange between wallets using live rates, set category-based trip budgets, make merchant payments, and view filtered transaction history — all secured with JWT authentication.
+A Spring Boot REST API for managing multi-currency digital wallets, built for FIFA fans planning trips and tracking match-day spending. Users can register with email verification, reset their password, hold wallets in multiple currencies, transfer funds, exchange between wallets using live rates, set category-based trip budgets, make merchant payments, and view filtered transaction history — all secured with JWT authentication.
 
 ## Features
 
 - **User accounts** — Registration, profile details, and JWT-based auth with refresh tokens
+- **Email verification** — New accounts receive a verification link; unverified users cannot log in
+- **Password reset** — Request a reset link by email and set a new password with a time-limited token
 - **Multi-currency wallets** — Create wallets in supported currencies (USD, EUR, GBP, JPY, and more)
 - **Transactions** — Deposit, withdraw, peer-to-peer transfer, and cross-currency exchange
 - **Transaction search** — Filter history by type, currency, date range, and amount
@@ -47,6 +49,16 @@ JWT_REFRESH_EXPIRATION=604800000
 ```
 
 > `JWT_SECRET` must be a Base64-encoded key suitable for HMAC-SHA256 signing.
+>
+> To enable email verification and password reset in Docker, also add SMTP and frontend URL variables to the `app` service `environment` block in `docker-compose.yml`:
+>
+> ```yaml
+> SPRING_MAIL_HOST: ${SPRING_MAIL_HOST}
+> SPRING_MAIL_PORT: ${SPRING_MAIL_PORT}
+> SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
+> SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
+> FRONTEND_URL: ${FRONTEND_URL}
+> ```
 
 2. Start the stack:
 
@@ -55,9 +67,6 @@ docker compose up --build
 ```
 
 The API will be available at `http://localhost:8080`.
-
-> [!NOTE]
-> If you wish to enable email verification in Docker, you should supply SMTP environment variables (e.g. `SPRING_MAIL_HOST`, `SPRING_MAIL_PORT`, `SPRING_MAIL_USERNAME`, `SPRING_MAIL_PASSWORD`) in your configuration/environment.
 
 ### Option 2: Local Development
 
@@ -84,7 +93,7 @@ spring.mail.password=your_app_password
 spring.mail.properties.mail.smtp.auth=true
 spring.mail.properties.mail.smtp.starttls.enable=true
 
-# Frontend URL (for generating the verification link)
+# Frontend URL (for verification and password-reset email links)
 frontend.url=http://localhost:5173
 ```
 
@@ -113,6 +122,7 @@ Most endpoints require a Bearer token. Public routes:
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `POST` | `/api/user/register` | Create a new account |
+| `POST` | `/api/user/forgot-password` | Request a password reset email |
 | `POST` | `/api/auth/login` | Obtain access and refresh tokens |
 | `POST` | `/api/auth/refresh-token` | Refresh an expired access token |
 
@@ -131,6 +141,8 @@ Authorization: Bearer <access_token>
 | `POST` | `/api/user/register` | Register a new user |
 | `GET` | `/api/user/verify` | Verify user account via token query parameter |
 | `POST` | `/api/user/resend-verification` | Resend verification email |
+| `POST` | `/api/user/forgot-password` | Send a password reset email |
+| `POST` | `/api/user/reset-password` | Reset password using a reset token |
 | `GET` | `/api/user/details` | Get authenticated user profile |
 
 #### Registration Requirements
@@ -148,6 +160,25 @@ Authorization: Bearer <access_token>
     "verificationToken": "existing-expired-token"
   }
   ```
+
+#### Password Reset Details
+- **Forgot Password**: `POST /api/user/forgot-password`
+  Request body:
+  ```json
+  {
+    "email": "user@example.com"
+  }
+  ```
+  Sends a reset link to the user's email. The link expires 1 hour after generation.
+- **Reset Password**: `POST /api/user/reset-password`
+  Request body:
+  ```json
+  {
+    "newPassword": "NewSecure1!",
+    "token": "reset-token-from-email-link"
+  }
+  ```
+  The new password must meet the same complexity rules as registration. The reset token is single-use and deleted after a successful reset.
 
 ### Wallets
 
@@ -327,7 +358,7 @@ Logs are written to the `logs/` directory at the project root (created automatic
 | `logs/endpoint.log` | `ENDPOINT_LOGGER` | HTTP request/response timing |
 | `logs/error.log` | `ERROR_LOGGER` | Service-layer exceptions |
 
-All files roll daily and are retained for 30 days. Console output remains enabled for local development.
+All files roll daily and are retained for 30 days. Console output remains enabled for local development. The `logs/` directory is gitignored and created automatically at runtime.
 
 ## Error Handling
 
@@ -344,9 +375,10 @@ API errors are returned as a consistent JSON shape via `GeneralExceptionHandler`
 |-------------|----------------|
 | `400` | Invalid arguments (e.g. same-wallet transfer, invalid budget dates) |
 | `401` | Invalid credentials or refresh token |
-| `403` | Access denied |
-| `404` | User, wallet, or budget not found |
+| `403` | Access denied, or account not yet verified |
+| `404` | User, wallet, budget not found, or invalid/expired verification or reset token |
 | `409` | Duplicate user/wallet/budget, insufficient funds, disabled wallet |
+| `500` | Email delivery failure |
 | `503` | Exchange rate API unavailable |
 
 ## Project Structure
@@ -360,7 +392,7 @@ src/main/java/com/oasis/FIFAFanWallet/
 ├── enums/           # Currency, budget category, transaction types, payment status, etc.
 ├── exception/       # Custom exceptions and global handler
 ├── filters/         # JWT authentication and request logging filters
-├── model/           # JPA entities (User, Wallet, Transaction, Budget, Payment)
+├── model/           # JPA entities (User, Wallet, Transaction, Budget, Payment, auth tokens)
 ├── repo/            # Spring Data repositories
 └── service/         # Business logic
 ```

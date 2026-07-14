@@ -14,6 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -30,9 +31,16 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http){
 
         http.csrf(customizer -> customizer.disable())
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
                         request -> request
-                                .requestMatchers("/api/user/register", "/api/user/forgot-password").permitAll()
+                                .requestMatchers(
+                                        "/api/user/register",
+                                        "/api/user/forgot-password",
+                                        "/api/user/verify",
+                                        "/api/user/reset-password",
+                                        "/api/user/resend-verification"
+                                ).permitAll()
                                 .requestMatchers("/api/auth/login", "/api/auth/refresh-token").permitAll()
                                 .requestMatchers("/error").permitAll()
                                 .anyRequest().authenticated())

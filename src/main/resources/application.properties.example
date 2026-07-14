@@ -21,3 +21,6 @@ spring.mail.properties.mail.smtp.starttls.enable=true
 # Frontend URL (for generating the verification link)
 frontend.url=FRONTEND_URL
 
+# Comma-separated browser origins allowed to call the API (Amplify URL, custom domain, local dev)
+cors.allowed-origins=http://localhost:5173
+
