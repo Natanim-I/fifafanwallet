@@ -20,7 +20,7 @@ public class UserController {
     }
 
     @GetMapping("verify")
-    public ResponseEntity<String> verify(@RequestParam String verificationToken){
+    public ResponseEntity<AccountVerificationResponse> verify(@RequestParam String verificationToken){
         return ResponseEntity.ok(userService.verifyAccount(verificationToken));
     }
 

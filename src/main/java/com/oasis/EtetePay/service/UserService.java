@@ -1,9 +1,6 @@
 package com.oasis.EtetePay.service;
 
-import com.oasis.EtetePay.dto.RegisterRequest;
-import com.oasis.EtetePay.dto.ResetPassRequest;
-import com.oasis.EtetePay.dto.UserResponse;
-import com.oasis.EtetePay.dto.VerificationRequest;
+import com.oasis.EtetePay.dto.*;
 import com.oasis.EtetePay.exception.InvalidVerificationToken;
 import com.oasis.EtetePay.exception.UserAlreadyExistsException;
 import com.oasis.EtetePay.exception.UserNotFoundException;
@@ -62,11 +59,11 @@ public class UserService {
         return new UserResponse(user.getUserId(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getCountry());
     }
 
-    public String verifyAccount(String verificationToken) {
+    public AccountVerificationResponse verifyAccount(String verificationToken) {
         User user = userRepository.findByVerificationToken(verificationToken).orElseThrow(() -> new InvalidVerificationToken("Invalid token."));
 
         if (user.isEnabled()) {
-            return "Account already verified.";
+            return new AccountVerificationResponse("Account already verified.");
         }
 
         if(user.getTokenExpiry().isBefore(LocalDateTime.now())){
@@ -77,7 +74,7 @@ public class UserService {
         user.setVerificationToken(null);
         userRepository.save(user);
 
-        return "Account verified successfully.";
+        return new AccountVerificationResponse("Account verified successfully.");
     }
 
     public String resendVerificationEmail(VerificationRequest verificationRequest) {
