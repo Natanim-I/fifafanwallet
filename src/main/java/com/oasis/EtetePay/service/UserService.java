@@ -65,6 +65,10 @@ public class UserService {
     public String verifyAccount(String verificationToken) {
         User user = userRepository.findByVerificationToken(verificationToken).orElseThrow(() -> new InvalidVerificationToken("Invalid token."));
 
+        if (user.isEnabled()) {
+            return "Account already verified.";
+        }
+
         if(user.getTokenExpiry().isBefore(LocalDateTime.now())){
             throw new InvalidVerificationToken("Expired verification token. Please request a new verification email.");
         }
@@ -78,6 +82,10 @@ public class UserService {
 
     public String resendVerificationEmail(VerificationRequest verificationRequest) {
         User user = userRepository.findByEmailAndVerificationToken(verificationRequest.email(), verificationRequest.verificationToken()).orElseThrow(() -> new UserNotFoundException("User not found."));
+
+        if (user.isEnabled()) {
+            return "Account already verified. You can sign in.";
+        }
 
         if(user.getTokenExpiry().isBefore(LocalDateTime.now())){
             user.setTokenExpiry(LocalDateTime.now().plusHours(1));
