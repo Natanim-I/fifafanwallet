@@ -83,8 +83,8 @@ public class WalletService {
         }
 
         switch (user.getCountry()){
-            case "ETHIOPIA" -> validateEthiopianRules(kycProfile, currency);
-            case "USA" -> validateUSARules(kycProfile, currency);
+            case ETHIOPIA -> validateEthiopianRules(kycProfile, currency);
+            case UNITED_STATES -> validateUSARules(kycProfile, currency);
             default -> throw new IllegalArgumentException("Wallet creation is not allowed for users from this country.");
         }
     }

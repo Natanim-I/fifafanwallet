@@ -1,5 +1,7 @@
 package com.oasis.EtetePay.dto;
 
+import com.oasis.EtetePay.enums.Country;
+
 import java.util.UUID;
 
 public record UserResponse(
@@ -7,5 +9,5 @@ public record UserResponse(
         String email,
         String firstName,
         String lastName,
-        String country
+        Country country
 ) {}
