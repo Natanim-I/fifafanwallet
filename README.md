@@ -1,12 +1,13 @@
 # EtetePay
 
-A Spring Boot REST API for managing multi-currency digital wallets with EtetePay. Users can register with email verification, reset their password, hold wallets in multiple currencies, transfer funds, exchange between wallets using live rates, set category-based budgets, make merchant payments, and view filtered transaction history — all secured with JWT authentication.
+A Spring Boot REST API for managing multi-currency digital wallets with EtetePay. Users can register with email verification, reset their password, submit KYC identity documents, hold wallets in multiple currencies, transfer funds, exchange between wallets using live rates, set category-based budgets, make merchant payments, and view filtered transaction history — all secured with JWT authentication.
 
 ## Features
 
 - **User accounts** — Registration, profile details, and JWT-based auth with refresh tokens
 - **Email verification** — New accounts receive a verification link; unverified users cannot log in
-- **Password reset** — Request a reset link by email and set a new password with a time-limited token
+- **Password reset** — Request a reset link by email, set a new password with a time-limited token, and receive a confirmation email after a successful reset
+- **KYC identity verification** — Submit personal details and ID images (front, back, selfie); documents are uploaded to AWS S3 and the profile moves to `PENDING` for review
 - **Multi-currency wallets** — Create wallets in supported currencies (USD, EUR, GBP, JPY, and more)
 - **Transactions** — Deposit, withdraw, peer-to-peer transfer, and cross-currency exchange
 - **Transaction search** — Filter history by type, currency, date range, and amount
@@ -14,6 +15,7 @@ A Spring Boot REST API for managing multi-currency digital wallets with EtetePay
 - **Category-based budgets** — Create budgets by spending category and period, with overlap protection and period validation
 - **Merchant payments** — Pay from a wallet, record the transaction, and automatically update the matching active budget (with cross-currency conversion when needed)
 - **Structured logging** — Request/response timing via servlet filter, AOP-based service audit logs, and separate rolling log files for app, endpoint, and error output
+- **CORS** — Configurable allowed browser origins for frontend apps (local dev and deployed Amplify URLs)
 
 ## Tech Stack
 
@@ -24,6 +26,7 @@ A Spring Boot REST API for managing multi-currency digital wallets with EtetePay
 | Security | Spring Security + JWT (jjwt 0.13) |
 | Persistence | Spring Data JPA + PostgreSQL 16 |
 | Logging | Logback + Spring AOP (AspectJ) |
+| File storage | AWS S3 (AWS SDK v2) |
 | Build | Maven |
 | Containerization | Docker + Docker Compose |
 
@@ -33,6 +36,7 @@ A Spring Boot REST API for managing multi-currency digital wallets with EtetePay
 - **Maven** (or use the included `./mvnw` wrapper)
 - **PostgreSQL 16** (for local development without Docker)
 - **Docker & Docker Compose** (optional, for containerized setup)
+- **AWS credentials** with S3 write access (required for KYC document uploads)
 
 ## Getting Started
 
@@ -43,22 +47,35 @@ A Spring Boot REST API for managing multi-currency digital wallets with EtetePay
 ```env
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=your_password
-DB_URL=jdbc:postgresql://postgres:5432/etete_pay
+DB_URL=jdbc:postgresql://postgres:5432/etete-pay
 JWT_SECRET=your_base64_encoded_secret_key
 JWT_REFRESH_EXPIRATION=604800000
+MAIL_USERNAME=your_smtp_username
+MAIL_PASSWORD=your_smtp_password
+AWS_REGION=us-east-1
+AWS_S3_BUCKET_NAME=your-kyc-bucket
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+FRONTEND_URL=http://localhost:5173
+CORS_ALLOWED_ORIGINS=http://localhost:5173
 ```
 
 > `JWT_SECRET` must be a Base64-encoded key suitable for HMAC-SHA256 signing.
 >
-> To enable email verification and password reset in Docker, also add SMTP and frontend URL variables to the `app` service `environment` block in `docker-compose.yml`:
+> To enable email verification, password reset, KYC uploads, and CORS in Docker, also add the remaining variables to the `app` service `environment` block in `docker-compose.yml`:
 >
 > ```yaml
 > SPRING_MAIL_HOST: ${SPRING_MAIL_HOST}
 > SPRING_MAIL_PORT: ${SPRING_MAIL_PORT}
-> SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
-> SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
 > FRONTEND_URL: ${FRONTEND_URL}
+> AWS_REGION: ${AWS_REGION}
+> AWS_S3_BUCKET_NAME: ${AWS_S3_BUCKET_NAME}
+> AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+> AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+> CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
 > ```
+>
+> The S3 client uses the default AWS credential chain. In Docker, pass credentials via `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`, or configure an IAM role when running on AWS.
 
 2. Start the stack:
 
@@ -95,6 +112,20 @@ spring.mail.properties.mail.smtp.starttls.enable=true
 
 # Frontend URL (for verification and password-reset email links)
 frontend.url=http://localhost:5173
+
+# Comma-separated browser origins allowed to call the API
+cors.allowed-origins=http://localhost:5173
+
+# AWS S3 (KYC document uploads)
+aws.region=us-east-1
+aws.s3.bucket-name=your-kyc-bucket
+```
+
+For local development, also configure AWS credentials using the standard environment variables:
+
+```bash
+export AWS_ACCESS_KEY_ID=your_access_key
+export AWS_SECRET_ACCESS_KEY=your_secret_key
 ```
 
 3. Create the PostgreSQL database:
@@ -144,6 +175,7 @@ Authorization: Bearer <access_token>
 | `POST` | `/api/user/forgot-password` | Send a password reset email |
 | `POST` | `/api/user/reset-password` | Reset password using a reset token |
 | `GET` | `/api/user/details` | Get authenticated user profile |
+| `POST` | `/api/user/submit-kyc` | Submit KYC details and identity images |
 
 #### Registration Requirements
 - **Password**: Must be at least 8 characters, containing at least one uppercase letter, one lowercase letter, one number, and one special character.
@@ -151,9 +183,9 @@ Authorization: Bearer <access_token>
 
 #### Verification Details
 - **Verify Account**: `GET /api/user/verify?verificationToken={token}`
-  Validates the token. Expiry is 1 hour from generation.
+  Validates the token. Expiry is 1 hour from generation. If the account is already verified, returns a success message without error.
 - **Resend Verification**: `POST /api/user/resend-verification`
-  Request body structure:
+  If the account is already verified, returns a message indicating the user can sign in. Request body structure:
   ```json
   {
     "email": "user@example.com",
@@ -178,7 +210,51 @@ Authorization: Bearer <access_token>
     "token": "reset-token-from-email-link"
   }
   ```
-  The new password must meet the same complexity rules as registration. The reset token is single-use and deleted after a successful reset.
+  The new password must meet the same complexity rules as registration. The reset token is single-use and deleted after a successful reset. A confirmation email is sent after the password is updated.
+
+#### KYC submission
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/user/submit-kyc` | Submit KYC details and identity images (authenticated) |
+
+A `KYCProfile` is created automatically when a user registers, with status `NOT_STARTED`. The submit endpoint updates that profile, uploads three images to S3, and sets the status to `PENDING`.
+
+**Content type:** `multipart/form-data`
+
+| Part | Type | Description |
+|------|------|-------------|
+| `kycRequest` | JSON | Personal details (see below) |
+| `idFrontImage` | File | Front of government ID |
+| `idBackImage` | File | Back of government ID |
+| `selfieImage` | File | Selfie photo |
+
+**`kycRequest` fields:**
+
+| Field | Rules |
+|-------|-------|
+| `faydaNumber` | Required; exactly 12 characters |
+| `firstName` | Required; max 50 characters |
+| `middleName` | Optional; max 50 characters |
+| `lastName` | Required; max 50 characters |
+| `dateOfBirth` | Required; must be in the past and user must be at least 18 |
+| `phoneNumber` | Required; valid Ethiopia (`+251` / `251` / `0` + `9xxxxxxxx`) or US format |
+
+**Image rules:**
+
+- Allowed types: `image/jpeg`, `image/jpg`, `image/png`
+- Maximum size: 5 MB per file
+- Files are stored in S3 under `kyc/{userId}/{imageType}-{uuid}.{ext}`
+
+Example response:
+
+```json
+{
+  "kycId": "550e8400-e29b-41d4-a716-446655440000",
+  "status": "PENDING",
+  "submittedAt": "2026-07-16T18:30:00"
+}
+```
 
 ### Wallets
 
@@ -326,6 +402,10 @@ Example response (`201 Created`):
 
 `ACTIVE`, `DISABLED`
 
+### KYC Statuses
+
+`NOT_STARTED`, `PENDING`, `VERIFIED`, `REJECTED`
+
 ## Logging & Observability
 
 The application uses a two-layer logging setup configured in `src/main/resources/logback.xml`.
@@ -376,25 +456,26 @@ API errors are returned as a consistent JSON shape via `GeneralExceptionHandler`
 | `400` | Invalid arguments (e.g. same-wallet transfer, invalid budget dates) |
 | `401` | Invalid credentials or refresh token |
 | `403` | Access denied, or account not yet verified |
-| `404` | User, wallet, budget not found, or invalid/expired verification or reset token |
+| `404` | User, wallet, budget, or KYC profile not found; invalid/expired verification or reset token |
 | `409` | Duplicate user/wallet/budget, insufficient funds, disabled wallet |
-| `500` | Email delivery failure |
+| `500` | Email delivery failure or S3 upload failure |
 | `503` | Exchange rate API unavailable |
 
 ## Project Structure
 
 ```
 src/main/java/com/oasis/EtetePay/
+├── annotation/      # Custom validation (phone number, age)
 ├── aop/             # AOP logging aspect for service-layer audit trails
-├── config/          # Security, REST client setup
+├── config/          # Security, CORS, S3, REST client setup
 ├── controller/      # REST API endpoints
 ├── dto/             # Request/response records
-├── enums/           # Currency, budget category, transaction types, payment status, etc.
+├── enums/           # Currency, budget category, KYC status, transaction types, etc.
 ├── exception/       # Custom exceptions and global handler
 ├── filters/         # JWT authentication and request logging filters
-├── model/           # JPA entities (User, Wallet, Transaction, Budget, Payment, auth tokens)
+├── model/           # JPA entities (User, Wallet, Transaction, Budget, Payment, KYCProfile, auth tokens)
 ├── repo/            # Spring Data repositories
-└── service/         # Business logic
+└── service/         # Business logic (including KycService and S3Service)
 ```
 
 ## Running Tests

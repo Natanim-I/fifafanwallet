@@ -47,6 +47,11 @@ public class UserController {
         return ResponseEntity.ok(userService.resetPassword(resetPassRequest.newPassword(), resetPassRequest.token()));
     }
 
+    @GetMapping("kyc-status")
+    public ResponseEntity<KycResponse> getKycStatus(){
+        return ResponseEntity.ok(kycService.getKycStatus());
+    }
+
     @PostMapping(value = "submit-kyc", consumes = {"multipart/form-data"})
     public ResponseEntity<KycResponse> processKyc(@RequestPart KycRequest kycRequest, @RequestPart MultipartFile idFrontImage, @RequestPart MultipartFile idBackImage, @RequestPart MultipartFile selfieImage){
         return ResponseEntity.ok(kycService.processKyc(kycRequest, idFrontImage, idBackImage, selfieImage));

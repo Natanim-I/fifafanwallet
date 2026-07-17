@@ -50,4 +50,12 @@ public class KycService {
 
         return new KycResponse(kycProfile.getKycId(), kycProfile.getStatus(), kycProfile.getSubmittedAt());
     }
+
+    public KycResponse getKycStatus() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found."));
+        KYCProfile kycProfile = kycProfileRepository.findByUser(user).orElseThrow(() -> new KycProfileNotFoundException("Kyc profile not found."));
+
+        return new KycResponse(kycProfile.getKycId(), kycProfile.getStatus(), kycProfile.getSubmittedAt());
+    }
 }
