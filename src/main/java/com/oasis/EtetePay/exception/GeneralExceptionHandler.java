@@ -106,4 +106,14 @@ public class GeneralExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBudgetExists(BudgetAlreadyExistsException ex){
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(409, ex.getMessage()));
     }
+
+    @ExceptionHandler(KycProfileNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleKycProfileNotFound(KycProfileNotFoundException ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(404, ex.getMessage()));
+    }
+
+    @ExceptionHandler(FailedToUploadToS3Exception.class)
+    public ResponseEntity<ErrorResponse> handleFailedToUploadToS3(FailedToUploadToS3Exception ex){
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(500, ex.getMessage()));
+    }
 }

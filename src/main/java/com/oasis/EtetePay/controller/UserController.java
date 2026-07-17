@@ -48,7 +48,7 @@ public class UserController {
     }
 
     @PostMapping(value = "submit-kyc", consumes = {"multipart/form-data"})
-    public ResponseEntity<KycResponse> processKyc(@RequestPart KycRequest kycRequest, @RequestPart MultipartFile idImage, @RequestPart MultipartFile selfieImage){
-        return ResponseEntity.ok(kycService.processKyc(kycRequest, idImage, selfieImage));
+    public ResponseEntity<KycResponse> processKyc(@RequestPart KycRequest kycRequest, @RequestPart MultipartFile idFrontImage, @RequestPart MultipartFile idBackImage, @RequestPart MultipartFile selfieImage){
+        return ResponseEntity.ok(kycService.processKyc(kycRequest, idFrontImage, idBackImage, selfieImage));
     }
 }

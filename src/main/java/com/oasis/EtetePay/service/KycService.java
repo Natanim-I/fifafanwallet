@@ -24,7 +24,7 @@ public class KycService {
     private final UserRepository userRepository;
     private final S3Service s3Service;
 
-    public KycResponse processKyc(KycRequest kycRequest, MultipartFile idImage, MultipartFile selfieImage) {
+    public KycResponse processKyc(KycRequest kycRequest, MultipartFile idFrontImage, MultipartFile idBackImage, MultipartFile selfieImage) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found."));
         KYCProfile kycProfile = kycProfileRepository.findByUser(user).orElseThrow(() -> new KycProfileNotFoundException("Kyc profile not found."));
@@ -38,9 +38,14 @@ public class KycService {
         kycProfile.setStatus(KYCStatus.PENDING);
         kycProfile.setSubmittedAt(LocalDateTime.now());
 
-        String idImageKey = s3Service.uploadFile(idImage);
-        String selfieImageKey = s3Service.uploadFile(selfieImage);
+        String idFrontImageKey = s3Service.uploadKycImage(idFrontImage, user.getUserId(), "id-front");
+        String idBackImageKey = s3Service.uploadKycImage(idBackImage, user.getUserId(), "id-back");
+        String selfieImageKey = s3Service.uploadKycImage(selfieImage, user.getUserId(), "selfie");
 
+        kycProfile.setIdFrontImageKey(idFrontImageKey);
+        kycProfile.setIdBackImageKey(idBackImageKey);
+        kycProfile.setSelfieImageKey(selfieImageKey);
+        
         return null;
     }
 }

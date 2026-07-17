@@ -30,8 +30,9 @@ public class KYCProfile {
     private String lastName;
     private LocalDate dateOfBirth;
     private String phoneNumber;
-    private String idDocumentUrl;
-    private String selfieImageUrl;
+    private String idFrontImageKey;
+    private String idBackImageKey;
+    private String selfieImageKey;
     private LocalDateTime submittedAt;
     private LocalDateTime verifiedAt;
 
