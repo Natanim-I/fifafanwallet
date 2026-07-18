@@ -35,7 +35,7 @@ public class WalletService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepo.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found."));
 
-        List<Wallet> wallets = walletRepository.findAllByUser(user);
+        List<Wallet> wallets = walletRepository.findAllByUserAndStatus(user, WalletStatus.ACTIVE);
 
         BigDecimal totalBalance = BigDecimal.ZERO;
 
@@ -54,7 +54,7 @@ public class WalletService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepo.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found!"));
 
-        List<Wallet> wallets = walletRepository.findAllByUser(user);
+        List<Wallet> wallets = walletRepository.findAllByUserAndStatus(user, WalletStatus.ACTIVE);
 
         return wallets.stream()
                 .map(wallet -> new WalletResponse(wallet.getWalletId(), wallet.getBalance(), wallet.getCurrency()))
@@ -65,10 +65,13 @@ public class WalletService {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepo.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User not found!"));
 
+        validateWalletCreation(user, walletRequest.currency());
+
         boolean walletExists = walletRepository.existsByUserAndCurrency(user, walletRequest.currency());
         if(walletExists){
             throw new WalletAlreadyExistsException("Wallet already exists for this currency");
         }
+
         Wallet wallet = new Wallet(walletRequest.currency(), BigDecimal.ZERO, user, WalletStatus.ACTIVE);
         Wallet savedWallet = walletRepository.save(wallet);
         return new WalletResponse(savedWallet.getWalletId(), savedWallet.getBalance(), savedWallet.getCurrency());

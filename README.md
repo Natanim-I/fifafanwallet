@@ -7,7 +7,7 @@ A Spring Boot REST API for managing multi-currency digital wallets with EtetePay
 - **User accounts** — Registration, profile details, and JWT-based auth with refresh tokens
 - **Email verification** — New accounts receive a verification link; unverified users cannot log in
 - **Password reset** — Request a reset link by email, set a new password with a time-limited token, and receive a confirmation email after a successful reset
-- **KYC identity verification** — Submit personal details and ID images (front, back, selfie); documents are uploaded to AWS S3 and the profile moves to `PENDING` for review
+- **KYC identity verification** — Submit personal details and ID images (front, back, selfie); documents are uploaded to AWS S3, the profile moves to `PENDING` for review, and status can be checked at any time
 - **Multi-currency wallets** — Create wallets in supported currencies (USD, EUR, GBP, JPY, and more)
 - **Transactions** — Deposit, withdraw, peer-to-peer transfer, and cross-currency exchange
 - **Transaction search** — Filter history by type, currency, date range, and amount
@@ -175,11 +175,24 @@ Authorization: Bearer <access_token>
 | `POST` | `/api/user/forgot-password` | Send a password reset email |
 | `POST` | `/api/user/reset-password` | Reset password using a reset token |
 | `GET` | `/api/user/details` | Get authenticated user profile |
+| `GET` | `/api/user/kyc-status` | Get the authenticated user's KYC status |
 | `POST` | `/api/user/submit-kyc` | Submit KYC details and identity images |
 
 #### Registration Requirements
 - **Password**: Must be at least 8 characters, containing at least one uppercase letter, one lowercase letter, one number, and one special character.
-- **Country**: Must be a valid 3-letter uppercase ISO country code.
+- **Country**: Must be one of the supported `Country` enum values (see [Supported Countries](#supported-countries)).
+
+Example request:
+
+```json
+{
+  "email": "user@example.com",
+  "password": "SecurePass1!",
+  "firstName": "John",
+  "lastName": "Doe",
+  "country": "ETHIOPIA"
+}
+```
 
 #### Verification Details
 - **Verify Account**: `GET /api/user/verify?verificationToken={token}`
@@ -212,13 +225,14 @@ Authorization: Bearer <access_token>
   ```
   The new password must meet the same complexity rules as registration. The reset token is single-use and deleted after a successful reset. A confirmation email is sent after the password is updated.
 
-#### KYC submission
+#### KYC
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
+| `GET` | `/api/user/kyc-status` | Get the authenticated user's current KYC status (authenticated) |
 | `POST` | `/api/user/submit-kyc` | Submit KYC details and identity images (authenticated) |
 
-A `KYCProfile` is created automatically when a user registers, with status `NOT_STARTED`. The submit endpoint updates that profile, uploads three images to S3, and sets the status to `PENDING`.
+A `KYCProfile` is created automatically when a user registers, with status `NOT_STARTED` and level `NONE`. The submit endpoint updates that profile, uploads three images to S3, sets the status to `PENDING`, and sets the level to `BASIC`.
 
 **Content type:** `multipart/form-data`
 
@@ -246,7 +260,7 @@ A `KYCProfile` is created automatically when a user registers, with status `NOT_
 - Maximum size: 5 MB per file
 - Files are stored in S3 under `kyc/{userId}/{imageType}-{uuid}.{ext}`
 
-Example response:
+Example response (submit or status):
 
 ```json
 {
@@ -255,6 +269,8 @@ Example response:
   "submittedAt": "2026-07-16T18:30:00"
 }
 ```
+
+`submittedAt` is `null` until KYC documents have been submitted.
 
 ### Wallets
 
@@ -374,9 +390,15 @@ Example response (`201 Created`):
 
 ## Enums
 
+### Supported Countries
+
+`ETHIOPIA`, `UNITED_STATES`, `UNITED_KINGDOM`, `CANADA`, `ITALY`
+
+Used at registration and returned on the user profile.
+
 ### Supported Currencies
 
-`USD`, `EUR`, `GBP`, `JPY`, `CHF`, `CAD`, `AUD`, `CNY`, `INR`, `BRL`, `MXN`, `RUB`, `ZAR`, `AED`, `SGD`, `ETH`
+`USD`, `EUR`, `GBP`, `JPY`, `CHF`, `CAD`, `AUD`, `CNY`, `INR`, `BRL`, `MXN`, `RUB`, `ZAR`, `AED`, `SGD`, `ETB`
 
 ### Budget Categories
 
@@ -405,6 +427,14 @@ Example response (`201 Created`):
 ### KYC Statuses
 
 `NOT_STARTED`, `PENDING`, `VERIFIED`, `REJECTED`
+
+### KYC Levels
+
+`NONE`, `BASIC`, `ENHANCED`
+
+- `NONE` — Initial level assigned at registration
+- `BASIC` — Assigned when KYC documents are submitted
+- `ENHANCED` — Reserved for elevated verification tiers
 
 ## Logging & Observability
 
@@ -470,7 +500,7 @@ src/main/java/com/oasis/EtetePay/
 ├── config/          # Security, CORS, S3, REST client setup
 ├── controller/      # REST API endpoints
 ├── dto/             # Request/response records
-├── enums/           # Currency, budget category, KYC status, transaction types, etc.
+├── enums/           # Country, currency, budget category, KYC status/level, transaction types, etc.
 ├── exception/       # Custom exceptions and global handler
 ├── filters/         # JWT authentication and request logging filters
 ├── model/           # JPA entities (User, Wallet, Transaction, Budget, Payment, KYCProfile, auth tokens)
