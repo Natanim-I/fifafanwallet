@@ -58,6 +58,11 @@ public class TransactionService {
         PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
                 .setAmount(stripeAmount)
                 .setCurrency(wallet.getCurrency().name().toLowerCase())
+                .setAutomaticPaymentMethods(
+                        PaymentIntentCreateParams.AutomaticPaymentMethods.builder()
+                                .setEnabled(true)
+                                .build())
+                .putMetadata("transactionId", transaction.getTransactionId().toString())
                 .build();
 
         PaymentIntent intent;
@@ -66,6 +71,10 @@ public class TransactionService {
         } catch (StripeException e) {
             throw new StripePaymentException("Failed to create payment intent: " + e.getMessage());
         }
+
+        transaction.setPaymentIntentId(intent.getId());
+        transactionRepository.save(transaction);
+
         return new DepositInitiationResponse(transaction.getTransactionId(), intent.getClientSecret());
     }
 

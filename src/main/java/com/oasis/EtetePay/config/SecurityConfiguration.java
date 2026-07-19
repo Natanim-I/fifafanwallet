@@ -42,6 +42,7 @@ public class SecurityConfiguration {
                                         "/api/user/resend-verification"
                                 ).permitAll()
                                 .requestMatchers("/api/auth/login", "/api/auth/refresh-token").permitAll()
+                                .requestMatchers("/api/webhooks/**").permitAll()
                                 .requestMatchers("/error").permitAll()
                                 .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
